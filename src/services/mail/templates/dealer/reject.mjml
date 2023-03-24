@@ -1,0 +1,37 @@
+<mjml>
+  <mj-head>
+    <mj-style inline="inline">
+      .link-nostyle {
+        color: inherit
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#ffffff">
+    <mj-include path="./layout/header.mjml" />
+    <mj-section padding-bottom="20px" padding-top="20px" background-color="#343434">
+      <mj-column vertical-align="middle" width="100%">
+        <mj-text font-size="16px" line-height="2" color="#ffffff">
+          Hello ${name},
+          <br /><br />
+          Thank you for your interest in Gear. We have reviewed your application - and, unfortunately, your company does
+          not match our eligibility criteria to purchase vehicles on our platform.
+          <br />
+          <br />
+
+          For us to proceed with your application, we require evidence clarifying the following details regarding your
+          company:
+          <br /><br />
+          <li>It is NZ-based vehicle retailer</li>
+          <li>It has an online presence - such as a fully-functioning website or an AutoTrader page</li>
+          <li>It has a Company number or NZBN</li>
+          <li>It has a GST registration number</li>
+          <li>It has verified, positive reviews on platforms such as Google, Trustpilot and AutoTrader</li>
+          <br /><br />
+          If you believe you meet the above criteria or have supplied incorrect information in error, please email
+          <a href="" class="link-nostyle">dealers@gear.co.nz</a>. We’ll be happy to assist you. The Gear Team
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-include path="./layout/footer.mjml" />
+  </mj-body>
+</mjml>

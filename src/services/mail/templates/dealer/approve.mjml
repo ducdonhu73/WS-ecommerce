@@ -1,0 +1,34 @@
+<mjml>
+  <mj-head>
+    <mj-style inline="inline">
+      .link-nostyle {
+        color: inherit
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#ffffff">
+    <mj-include path="./layout/header.mjml" />
+    <mj-section padding-bottom="20px" padding-top="20px" background-color="#343434">
+      <mj-column vertical-align="middle" width="100%">
+        <mj-text font-size="16px" line-height="2" color="#ffffff">
+          Hello <%= name%>,
+          <br /><br />
+          We’re delighted to let you know that your registration with Gear has been successful. You can now log in to
+          your account and take advantage of all the services we offer.
+          <br /><br />
+          To access your account, simply click on the link below:
+          <br /><br />
+          <a href="<%= loginLink%>" target="_blank" class="link-nostyle">Link</a>
+          <br /><br />
+          Thank you for choosing to register with us. If you have any questions or need any assistance, please don’t
+          hesitate to reach out to our support team.
+          <br /><br />
+          We’re always here to help.
+          <br /><br />
+          The Gear Team
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-include path="./layout/footer.mjml" />
+  </mj-body>
+</mjml>

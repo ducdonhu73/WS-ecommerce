@@ -1,0 +1,31 @@
+<mjml>
+  <mj-body background-color="#ffffff">
+    <mj-include path="./layout/header.mjml" />
+    <mj-section padding-bottom="20px" padding-top="20px">
+      <mj-column vertical-align="middle" width="100%">
+        <mj-text font-size="16px" line-height="1.5">
+          Hello ${name},
+          <br /><br />
+          We are writing to provide you with an update regarding the auction of your car. Unfortunately, your car did
+          not sell during the daily auction. This can be for a number of reasons, including the current popularity of
+          the make and model of vehicle of recent high volumes of a particular model in the market at the time.
+          <br />
+          <br />
+          We understand that this news may be disappointing, and we want to assure you that we remain committed to
+          helping you sell your car.
+          <br />
+          <br />
+          In light of that, we wanted to ask if you would be willing to adjust the price of your car to make it more
+          competitive and attractive to our verified dealers.
+          <br />
+          <br />
+          <br />
+          Best regards,
+          <br />
+          The Gear Team
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-include path="./layout/footer.mjml" />
+  </mj-body>
+</mjml>

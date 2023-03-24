@@ -1,0 +1,18 @@
+<mj-section background-color="#DC5E5E" padding="0px" padding-top="30px">
+  <mj-column vertical-align="top" width="100%">
+    <mj-image src="https://gear-nz.s3.ap-southeast-2.amazonaws.com/gear-logo-white.png" width="148px" alt="" />
+  </mj-column>
+  <mj-column width="100%">
+    <mj-navbar base-url="https://mjml.io" hamburger="hamburger" ico-color="#ffffff">
+      <mj-navbar-link href="/gettings-started-onboard" color="#ffffff" text-decoration="underline" text-transform="none" font-family="Lato" font-size="16px">
+        Sell my car
+      </mj-navbar-link>
+      <mj-navbar-link href="/gettings-started-onboard" color="#ffffff" text-decoration="underline" text-transform="none" font-family="Lato" font-size="16px">
+        Car valuation
+      </mj-navbar-link>
+      <mj-navbar-link href="/gettings-started-onboard" color="#ffffff" text-decoration="underline" text-transform="none" font-family="Lato" font-size="16px">
+        Become a dealer
+      </mj-navbar-link>
+    </mj-navbar>
+  </mj-column>
+</mj-section>

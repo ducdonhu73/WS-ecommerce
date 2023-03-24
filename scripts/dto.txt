@@ -1,0 +1,15 @@
+import { IsNotEmpty } from 'class-validator';
+import { Sample } from '../entities/discovery.schema';
+
+export class Request {
+  @IsNotEmpty()
+  id: string;
+}
+
+export class Response {
+  id: string;
+
+  constructor(sample: Sample) {
+    this.id = sample.id;
+  }
+}

@@ -1,0 +1,21 @@
+<mj-section padding="0px">
+  <mj-column border-top="1px solid" width="250px">
+    <mj-text />
+  </mj-column>
+  <mj-column padding-bottom="24px" width="100%">
+    <mj-social font-size="15px" icon-size="32px" mode="horizontal" align="center">
+      <mj-social-element name="facebook" href="https://mjml.io/" background-color="#A1A0A0"> </mj-social-element>
+      <mj-social-element name="youtube" href="https://mjml.io/" background-color="#A1A0A0"> </mj-social-element>
+      <mj-social-element name="linkedin" href="https://mjml.io/" background-color="#A1A0A0"> </mj-social-element>
+    </mj-social>
+  </mj-column>
+  <mj-column vertical-align="top" width="100%">
+    <mj-image src="https://gear-nz.s3.ap-southeast-2.amazonaws.com/ic-gear.png" width="54px" height="54px"></mj-image>
+  </mj-column>
+  <mj-column width="60%">
+    <mj-text font-weight="800" font-size="16px" align="center" color="#76797A"> Gear Technologies Ltd </mj-text>
+    <mj-text font-weight="400" font-size="16px" align="center" color="#808080" line-height="1.5">
+      393 Khyber Pass Rd, New Market, Auckland 1023
+    </mj-text>
+  </mj-column>
+</mj-section>
