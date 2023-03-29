@@ -25,9 +25,7 @@ async function bootstrap() {
       credentials: true,
     });
   }
-  // @ts-expect-error fastify error
   await app.register(compression, { encodings: ['gzip', 'deflate'] });
-  // @ts-expect-error fastify error
   await app.register(multipart, {
     limits: {
       fileSize: 10000000,
@@ -47,7 +45,10 @@ async function bootstrap() {
       new winston.transports.Console({
         format: winston.format.combine(
           winston.format.timestamp(),
-          nestWinstonModuleUtilities.format.nestLike('Gear', { prettyPrint: true, colors: true }),
+          nestWinstonModuleUtilities.format.nestLike('Gear', {
+            prettyPrint: true,
+            colors: true,
+          }),
         ),
         level: process.env['NODE_ENV'] === 'production' ? 'info' : 'debug',
       }),

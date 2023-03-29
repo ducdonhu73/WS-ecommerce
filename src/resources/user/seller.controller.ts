@@ -19,48 +19,47 @@ import { PaginationDataResponse } from 'dtos/pagination.dto';
 @ApiTags('Seller')
 @Controller('sellers')
 export class SellerController {
-  constructor(private readonly SellerService: SellerService) {}
+  constructor(private readonly sellerService: SellerService) {}
 
   @Post('register')
-  registerSeller(@Body() request: RegisterSellerRequest): Promise<SellerResponse> {
-    return this.SellerService.register(request);
+  registerSeller(@Body() request: RegisterSellerRequest): Promise<LoginResponse> {
+    return this.sellerService.register(request);
   }
 
   @Post('login')
   loginSeller(@Body() request: LoginSellerRequest): Promise<LoginResponse> {
-    return this.SellerService.login(request);
+    return this.sellerService.login(request);
   }
 
   @Post('change-password')
   changePassword(@Body() request: ChangePasswordRequest): Promise<void> {
-    return this.SellerService.changePassword(request);
+    return this.sellerService.changePassword(request);
   }
   /*
    * thông tin của user
    */
   @Get('me')
   getMyInfo(@UserId() userId: string): Promise<SellerResponse> {
-    return this.SellerService.getById(userId);
+    return this.sellerService.getById(userId);
   }
 
   @Get()
   getAllSeller(@Query() query: GetSellerQuery): Promise<PaginationDataResponse<SellerResponse>> {
-    return this.SellerService.getAllSellers(query);
+    return this.sellerService.getAllSellers(query);
   }
 
   @Put('me')
   updateMyInfo(@UserId() userId: string, @Body() request: UpdateSellerRequest): Promise<SellerResponse> {
-    return this.SellerService.update(userId, request);
+    return this.sellerService.updateSeller(userId, request);
   }
 
   @Delete('me/delete')
   deleteUser(@UserId() userId: string, @Body() request: DeleteSellerRequest): Promise<void> {
-    return this.SellerService.deleteAccount(userId, request.password);
+    return this.sellerService.deleteAccount(userId, request.password);
   }
 
   @Post('login-firebase')
   verifyLoginFirebase(@Body() request: VerifyFirebaseRequest): Promise<LoginFirebaseResponse> {
-    return this.SellerService.loginFirebase(request);
+    return this.sellerService.loginFirebase(request);
   }
 }
-

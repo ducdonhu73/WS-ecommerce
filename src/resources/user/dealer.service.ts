@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import {
@@ -16,27 +16,29 @@ import {
   RejectDocumentRequest,
   UpdateDealerRequest,
 } from './dto/dealer.dto';
-import { Dealer, DealerStatus, DealerDocument, DocumentFile, BusinessDocumentStatus } from './entities/dealer.entity';
+import { Dealer, DealerStatus, DealerDocument, BusinessDocumentStatus } from './entities/dealer.entity';
 import jwt from 'jsonwebtoken';
 import { PendingDealer, PendingDealerDocument } from './entities/pendingDealer.entity';
-import { PaginationDataResponse, PaginationQuery } from 'dtos/pagination.dto';
+import { PaginationDataResponse } from 'dtos/pagination.dto';
 import { Role } from 'constants/roles';
-import { FastifyRequest } from 'fastify';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { MailService } from 'services/mail/mail.service';
+// import { FastifyRequest } from 'fastify';
+// import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+// import { MailService } from 'services/mail/mail.service';
 
 @Injectable()
 export class DealerService {
   constructor(
     @InjectModel(Dealer.name) private dealerModel: Model<Dealer>,
-    @InjectModel(PendingDealer.name) private pendingDealerModel: Model<PendingDealer>,
-    @Inject(MailService) private mailService: MailService,
+    @InjectModel(PendingDealer.name)
+    private pendingDealerModel: Model<PendingDealer>,
   ) {}
 
   private readonly logger = new Logger(DealerService.name);
 
   async register(request: RegisterDealerRequest): Promise<void> {
-    const filter = { $or: [{ phoneNumber: request.phoneNumber }, { email: request.email }] };
+    const filter = {
+      $or: [{ phoneNumber: request.phoneNumber }, { email: request.email }],
+    };
     const pendingDealer = await this.pendingDealerModel.findOne(filter).exec();
     const dealer = await this.dealerModel.findOne(filter).exec();
     if (pendingDealer || dealer) {
@@ -69,11 +71,11 @@ export class DealerService {
   }
 
   async getPendingDealers(query: GetPendingDealerQuery): Promise<PaginationDataResponse<PendingDealerResponse>> {
-    const { page, limit, search, startDate, endDate, sortBy, orderBy="createdAt" } = query;
+    const { page, limit, search, startDate, endDate, orderBy = 1, sortBy = 'createdAt' } = query;
     let user: PendingDealerDocument[] = [];
     let total = 0;
 
-    let filter: FilterQuery<PendingDealerDocument> = {};
+    const filter: FilterQuery<PendingDealerDocument> = {};
 
     if (search) {
       filter.name = { $regex: new RegExp(`^${search}`, 'i') };
@@ -83,30 +85,30 @@ export class DealerService {
       filter.createdAt = {
         $gte: new Date(startDate),
         $lte: new Date(endDate),
-      }
+      };
     } else if (startDate) {
       filter.createdAt = {
-        $gte: new Date(startDate)
-      }
+        $gte: new Date(startDate),
+      };
     } else if (endDate) {
       filter.createdAt = {
-        $lte: new Date(endDate)
-      }
+        $lte: new Date(endDate),
+      };
     }
 
     total = await this.pendingDealerModel.find(filter).count();
     user = await this.pendingDealerModel
-    .find(filter)
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .sort({ [orderBy]: Number(sortBy)>0 ? 1 : -1})
+      .find(filter)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ [sortBy]: orderBy > 0 ? 1 : -1 });
     const response = user.map((u) => new PendingDealerResponse(u));
 
     return new PaginationDataResponse(response, { page, limit, total });
   }
 
   async getAllDealers(query: GetDealerQuery): Promise<PaginationDataResponse<DealerResponse>> {
-    const { page, limit, search, startDate, endDate, sortBy, orderBy="createdAt" } = query;
+    const { page, limit, search, startDate, endDate, orderBy = 1, sortBy = 'createdAt' } = query;
     let listDealer: DealerDocument[] = [];
     const filter: FilterQuery<DealerDocument> = {};
 
@@ -118,24 +120,24 @@ export class DealerService {
       filter.createdAt = {
         $gte: new Date(startDate),
         $lte: new Date(endDate),
-      }
+      };
     } else if (startDate) {
       filter.createdAt = {
-        $gte: new Date(startDate)
-      }
+        $gte: new Date(startDate),
+      };
     } else if (endDate) {
       filter.createdAt = {
-        $lte: new Date(endDate)
-      }
+        $lte: new Date(endDate),
+      };
     }
 
     listDealer = await this.dealerModel
       .find(filter)
       .skip((page - 1) * limit)
       .limit(limit)
-      .sort({ [orderBy]: Number(sortBy)>0 ? 1 : -1})
-      const response = listDealer.map((dealer) => new DealerResponse(dealer));
-    const total = listDealer.length
+      .sort({ [sortBy]: orderBy > 0 ? 1 : -1 });
+    const response = listDealer.map((dealer) => new DealerResponse(dealer));
+    const total = listDealer.length;
     return new PaginationDataResponse(response, { page, limit, total });
   }
 
@@ -162,13 +164,13 @@ export class DealerService {
     });
 
     if (newDealer) {
-      pendingDealer.delete();
+      pendingDealer.deleteOne();
     }
 
-    await this.mailService.sendApproveDealerMail(email, {
-      name: name,
-      loginLink: 'https://gear.teklabs.vn',
-    });
+    // await this.mailService.sendApproveDealerMail(email, {
+    //   name: name,
+    //   loginLink: 'https://gear.teklabs.vn',
+    // });
     return new DealerResponse(newDealer);
   }
 
@@ -179,10 +181,10 @@ export class DealerService {
       throw new BadRequestException('Pending dealer not found');
     }
 
-    await pendingDealer.delete();
-    await this.mailService.sendRejectDealerMail(pendingDealer.email, {
-      name: pendingDealer.name,
-    });
+    await pendingDealer.deleteOne();
+    // await this.mailService.sendRejectDealerMail(pendingDealer.email, {
+    //   name: pendingDealer.name,
+    // });
   }
 
   async changePassword(changePasswordRequest: ChangePasswordRequest): Promise<void> {
@@ -219,26 +221,27 @@ export class DealerService {
       throw new BadRequestException('User not found');
     }
 
-    await user.update(updateUserRequest);
+    await user.updateOne(updateUserRequest);
     return new DealerResponse(user);
   }
 
   async approvedDocument(request: ApproveDocumentRequest): Promise<void> {
-    const { dealerId } = request
-    await this.updateDocumentStatus(dealerId, true)
+    const { dealerId } = request;
+    await this.updateDocumentStatus(dealerId, true);
   }
 
   async rejectedDocument(request: RejectDocumentRequest): Promise<void> {
-    const { dealerId, message } = request
-    await this.updateDocumentStatus(dealerId, false)
+    const { dealerId } = request;
+    await this.updateDocumentStatus(dealerId, false);
     // to do send email reason reject
   }
 
   private async updateDocumentStatus(dealerId: string, accept: boolean) {
-    await this.dealerModel.findByIdAndUpdate(
-      dealerId, 
-      {$set: { "businessDocument.status": accept? BusinessDocumentStatus.APPROVED : BusinessDocumentStatus.REJECTED }}
-    )
+    await this.dealerModel.findByIdAndUpdate(dealerId, {
+      $set: {
+        'businessDocument.status': accept ? BusinessDocumentStatus.APPROVED : BusinessDocumentStatus.REJECTED,
+      },
+    });
   }
 
   async deleteAccount(userId: string, password: string): Promise<void> {
@@ -251,46 +254,51 @@ export class DealerService {
     await user.updateOne({ status: DealerStatus.DELETED });
   }
 
-  async uploadDocuments(userId: string, req: FastifyRequest): Promise<void> {
-    if (!req.isMultipart) {
-      throw new BadRequestException('Request is not multipart');
-    }
-    const files = req.files();
-    const s3Client = new S3Client({
-      region: 'ap-southeast-2',
-      credentials: {
-        accessKeyId: process.env['AWS_ACCESS_KEY_ID'] ?? '',
-        secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'] ?? '',
-      },
-    });
+  // async uploadDocuments(userId: string, req: FastifyRequest): Promise<void> {
+  //   if (!req.isMultipart) {
+  //     throw new BadRequestException('Request is not multipart');
+  //   }
+  //   const files = req.files();
+  //   const s3Client = new S3Client({
+  //     region: 'ap-southeast-2',
+  //     credentials: {
+  //       accessKeyId: process.env['AWS_ACCESS_KEY_ID'] ?? '',
+  //       secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'] ?? '',
+  //     },
+  //   });
 
-    const documents: DocumentFile[] = [];
-    for await (const file of files) {
-      const buffer = await file.toBuffer();
-      const key = 'dealer/' + userId + '/documents/' + file.filename;
-      // TODO: move to a new service
-      await s3Client.send(
-        new PutObjectCommand({
-          Bucket: 'gear-nz',
-          Key: key,
-          ACL: 'public-read',
-          Body: buffer,
-          ContentType: file.mimetype,
-        }),
-      );
-      const path = `https://gear-nz.s3.ap-southeast-2.amazonaws.com/${key}`;
-      documents.push({
-        name: key,
-        path,
-        mimetype: file.mimetype,
-      });
-    }
+  //   const documents: DocumentFile[] = [];
+  //   for await (const file of files) {
+  //     const buffer = await file.toBuffer();
+  //     const key = 'dealer/' + userId + '/documents/' + file.filename;
+  //     // TODO: move to a new service
+  //     await s3Client.send(
+  //       new PutObjectCommand({
+  //         Bucket: 'gear-nz',
+  //         Key: key,
+  //         ACL: 'public-read',
+  //         Body: buffer,
+  //         ContentType: file.mimetype,
+  //       }),
+  //     );
+  //     const path = `https://gear-nz.s3.ap-southeast-2.amazonaws.com/${key}`;
+  //     documents.push({
+  //       name: key,
+  //       path,
+  //       mimetype: file.mimetype,
+  //     });
+  //   }
 
-    await this.dealerModel.findByIdAndUpdate(
-      { _id: userId },
-      { businessDocument: { files: documents, status: BusinessDocumentStatus.PENDING } },
-    );
-  }
+  //   await this.dealerModel.findByIdAndUpdate(
+  //     { _id: userId },
+  //     {
+  //       businessDocument: {
+  //         files: documents,
+  //         status: BusinessDocumentStatus.PENDING,
+  //       },
+  //     },
+  //   );
+  // }
 
   private createToken(userId: string): string {
     const secretKey = process.env['JWT_SECRET'];

@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { PaginationQuery } from 'dtos/pagination.dto';
 
 import { Address, BusinessDocument, Company, DealerDocument, Position, VehicleInfo } from '../entities/dealer.entity';
 import { PendingDealerDocument } from '../entities/pendingDealer.entity';
+import { QueryFilter } from './user.dto';
 
 export class UpdateDealerRequest {
   @IsOptional()
@@ -146,37 +146,9 @@ export class PendingDealerResponse {
   }
 }
 
-export class GetPendingDealerQuery extends PaginationQuery {
-  search?: string;
+export class GetPendingDealerQuery extends QueryFilter {}
 
-  @Type(() => Date)
-  startDate?: Date;
-
-  @Type(() => Date)
-  endDate?: Date;
-
-  sortBy?: number;
-
-  @IsOptional()
-  @IsString()
-  orderBy?: string;
-}
-
-export class GetDealerQuery extends PaginationQuery {
-  search?: string;
-
-  @Type(() => Date)
-  startDate?: Date;
-
-  @Type(() => Date)
-  endDate?: Date;
-
-  sortBy?: number;
-
-  @IsOptional()
-  @IsString()
-  orderBy?: string;
-}
+export class GetDealerQuery extends QueryFilter {}
 
 export class ApproveDealerRequest {
   @IsNotEmpty()

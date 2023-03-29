@@ -1,6 +1,6 @@
 import { Module, DynamicModule } from '@nestjs/common';
+import serviceAccount from './serviceAccountKey.json';
 import * as firebase from 'firebase-admin';
-import serviceAccount from '../../serviceAccountKey.json';
 
 // TODO: Some better ways to do this?
 @Module({})

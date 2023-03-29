@@ -3,11 +3,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional } from 'class-validator';
 
-// export class PaginationParams {
-//     page: number;
-//     limit: number;
-// }
-
 export class PaginationQuery {
   @ApiPropertyOptional()
   @IsOptional()

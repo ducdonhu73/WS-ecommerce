@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import {
@@ -20,26 +20,26 @@ import { PaginationDataResponse } from 'dtos/pagination.dto';
 
 @Injectable()
 export class SellerService {
-  constructor(
-    @InjectModel(Seller.name) private SellerModel: Model<Seller>,
-  ) {}
+  constructor(@InjectModel(Seller.name) private SellerModel: Model<Seller>) {}
 
-  async register(request: RegisterSellerRequest): Promise<SellerResponse> {
-    const filter = { $or: [{ phoneNumber: request.phoneNumber }, { email: request.email }] };
+  async register(request: RegisterSellerRequest): Promise<LoginResponse> {
+    const filter = { phoneNumber: request.phoneNumber };
     const Seller = await this.SellerModel.findOne(filter).exec();
     if (Seller) {
       throw new BadRequestException('Phone number exist');
     }
-    const { firstName, lastName, phoneNumber, email, password, confirmPassword } = request
-    if (confirmPassword !== password ) throw new BadRequestException('Passwords are not the same!')
+    const { firstName, lastName, phoneNumber, email, password, confirmPassword, idGoogle } = request;
+    if (confirmPassword !== password) throw new BadRequestException('Passwords are not the same!');
     const newSeller = await this.SellerModel.create({
       firstName,
       lastName,
       phoneNumber,
       email,
-      password
-    })
-    return new SellerResponse(newSeller)
+      password,
+      idGoogle,
+    });
+    const authToken = this.createToken(newSeller.id as string);
+    return new LoginResponse(authToken);
   }
 
   async login(request: LoginSellerRequest): Promise<LoginResponse> {
@@ -63,11 +63,11 @@ export class SellerService {
 
     const authToken = this.createToken(user.id as string);
     return new LoginResponse(authToken);
-  } 
+  }
 
   async getAllSellers(query: GetSellerQuery): Promise<PaginationDataResponse<SellerResponse>> {
-    const { page, limit, search, startDate, endDate, sortBy, orderBy = "createdAt" } = query;
-    var listSeller: SellerDocument[] = [];
+    const { page, limit, search, startDate, endDate, orderBy = 1, sortBy = 'createdAt' } = query;
+    let listSeller: SellerDocument[] = [];
     const filter: FilterQuery<SellerDocument> = {};
 
     if (search) {
@@ -78,24 +78,23 @@ export class SellerService {
       filter.createdAt = {
         $gte: new Date(startDate),
         $lte: new Date(endDate),
-      }
+      };
     } else if (startDate) {
       filter.createdAt = {
-        $gte: new Date(startDate)
-      }
+        $gte: new Date(startDate),
+      };
     } else if (endDate) {
       filter.createdAt = {
-        $lte: new Date(endDate)
-      }
+        $lte: new Date(endDate),
+      };
     }
 
-    listSeller = await this.SellerModel
-      .find(filter)
+    listSeller = await this.SellerModel.find(filter)
       .skip((page - 1) * limit)
       .limit(limit)
-      .sort({ [orderBy]: Number(sortBy)>0 ? 1 : -1})
-      const response = listSeller.map((Seller) => new SellerResponse(Seller));
-    var total = listSeller.length
+      .sort({ [sortBy]: orderBy < 0 ? 1 : -1 });
+    const response = listSeller.map((Seller) => new SellerResponse(Seller));
+    const total = listSeller.length;
     return new PaginationDataResponse(response, { page, limit, total });
   }
 
@@ -108,11 +107,11 @@ export class SellerService {
 
     const seller = await this.SellerModel.findOne({ phoneNumber }).exec();
     if (!seller) {
-      throw new BadRequestException("dont find seller by phonenumber");
+      throw new BadRequestException('dont find seller by phonenumber');
     }
     await seller.comparePassword(oldPassword);
-    await seller.updateOne({ password: newPassword })
-    console.log("end")
+    await seller.updateOne({ password: newPassword });
+    console.log('end');
   }
 
   async getById(userId: string): Promise<SellerResponse> {
@@ -124,13 +123,13 @@ export class SellerService {
     return new SellerResponse(user);
   }
 
-  async update(userId: string, updateUserRequest: UpdateSellerRequest): Promise<SellerResponse> {
+  async updateSeller(userId: string, updateUserRequest: UpdateSellerRequest): Promise<SellerResponse> {
     const user = await this.SellerModel.findById(userId);
     if (!user) {
       throw new BadRequestException('User not found');
     }
 
-    await user.update(updateUserRequest);
+    await user.updateOne(updateUserRequest);
     return new SellerResponse(user);
   }
 
@@ -161,41 +160,41 @@ export class SellerService {
   }
 
   async loginFirebase(request: VerifyFirebaseRequest): Promise<LoginFirebaseResponse> {
-    const { token } = request
+    const { token } = request;
     const decodedToken = await getAuth().verifyIdToken(token);
-    const { email, uid, phoneNumber, name, firebase } = decodedToken;
+    const {
+      email,
+      uid,
+      phone_number,
+      name,
+      firebase: { sign_in_provider },
+    } = decodedToken;
     if (!email) throw new BadRequestException('verify failed!');
-    const seller = await this.SellerModel.findOne({ email: email });
-    const authToken = this.createToken(seller?.id as string);
-    let idFirebase = "idGoogle"
+    const seller = await this.SellerModel.findOne({ idFirebase: uid });
     if (seller) {
-      let message: string;
-      if (seller.idGoogle === uid) {
-        message = "login with "+firebase.sign_in_provider+" success!";
-      }
-      else {
-        if(firebase.sign_in_provider.includes("google")) {
-          await seller.update({$set: {idGoogle: uid}});
-        }
-        else {
-          idFirebase = "idFacebook";
-          await seller.update({$set: {idFacebook: uid}});
-        }
-        message = "add login with "+firebase.sign_in_provider+" into email: "+email
-      }
-      return new LoginFirebaseResponse("",message,authToken)
-    } 
+      const message: string = 'login with ' + sign_in_provider + ' success!';
+      const authToken = this.createToken(seller.id as string);
+      return new LoginFirebaseResponse(authToken, message);
+    }
 
-    let password = Math.round(Math.random()*100000000).toString()
-    await this.SellerModel.create({
-      firstName: name.split(" ").slice(1).join(" "),
-      lastName: name.split(" ")[0],
-      phoneNumber,
-      email: email,
+    const sellerFindByEmail = await this.SellerModel.findOne({ email: email });
+    if (sellerFindByEmail) throw new BadRequestException('Email exist');
+    const sellerFindByPhone = await this.SellerModel.findOne({
+      phoneNumber: phone_number,
+    });
+    if (sellerFindByPhone) throw new BadRequestException('Phone exist');
+
+    const password = Math.round(Math.random() * 100000000).toString();
+    const nameArray = (name as string).split(' ');
+    const newSeller = await this.SellerModel.create({
+      firstName: nameArray[0],
+      lastName: nameArray.slice(1).join(' '),
+      phoneNumber: phone_number,
+      email,
       password,
-      [idFirebase]: uid
-    })
-    // to do send email password to user
-    return new LoginFirebaseResponse(password, "", authToken);
+      idFirebase: uid,
+    });
+    const authToken = this.createToken(newSeller.id as string);
+    return new LoginFirebaseResponse(authToken, 'Created new seller account with ' + sign_in_provider);
   }
 }

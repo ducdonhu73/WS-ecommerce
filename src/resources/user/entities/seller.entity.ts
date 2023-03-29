@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { compare, hash } from 'bcrypt';
-import { CallbackWithoutResultAndOptionalError, Document, Query, UpdateQuery } from 'mongoose';
+import { Document, UpdateQuery } from 'mongoose';
 
 export enum SellerStatus {
   ACTIVE = 'active',
@@ -19,11 +19,11 @@ export class Seller {
   @Prop({ required: true })
   lastName: string;
 
-  @Prop({ index: true, unique: true })
+  @Prop({ sparse: true, unique: true })
   phoneNumber?: string;
 
-  @Prop({unique: true})
-  email?: string;
+  @Prop({ required: true, unique: true })
+  email: string;
 
   @Prop({ required: true })
   password: string;
@@ -38,10 +38,7 @@ export class Seller {
   createdAt: Date;
 
   @Prop()
-  idGoogle: string;
-
-  @Prop()
-  idFacebook: string
+  idFirebase: string;
 
   comparePassword: (candidatePassword: string) => Promise<void>;
 }
@@ -59,12 +56,12 @@ SellerSchema.pre('updateOne', async function () {
   if (update['password'] && typeof update['password'] === 'string') {
     const password = update['password'];
     const hashed = await hash(password, 10);
-    this.set({password: hashed});
+    await this.set({ password: hashed });
   }
 });
 
 SellerSchema.methods['comparePassword'] = async function (candidatePassword: string) {
-  const passwordValid = await compare(candidatePassword, this['password']);
+  const passwordValid = await compare(candidatePassword, this['password'] as string);
 
   if (!passwordValid) {
     throw new BadRequestException('Invalid password');

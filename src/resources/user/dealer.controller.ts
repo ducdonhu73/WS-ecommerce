@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Put, Delete, Post, Query, Req } from '@nestjs/common';
+import { Controller, Get, Body, Put, Delete, Post, Query } from '@nestjs/common';
 import { DealerService } from './dealer.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserId } from 'decorators/auth.decorator';
@@ -18,9 +18,9 @@ import {
   RejectDocumentRequest,
   UpdateDealerRequest,
 } from './dto/dealer.dto';
-import { PaginationDataResponse, PaginationQuery } from 'dtos/pagination.dto';
+import { PaginationDataResponse } from 'dtos/pagination.dto';
 import { ApiPaginatedResponse } from 'decorators/swagger-api-response.decorator';
-import { FastifyRequest } from 'fastify';
+// import { FastifyRequest } from 'fastify';
 
 @ApiTags('Dealer')
 @Controller('dealers')
@@ -42,7 +42,6 @@ export class DealerController {
   getPendingDealer(@Query() query: GetPendingDealerQuery): Promise<PaginationDataResponse<PendingDealerResponse>> {
     return this.dealerService.getPendingDealers(query);
   }
-
 
   @Get()
   getAllDealer(@Query() query: GetDealerQuery): Promise<PaginationDataResponse<DealerResponse>> {
@@ -74,10 +73,10 @@ export class DealerController {
     return this.dealerService.changePassword(request);
   }
 
-  @Post('/upload-documents')
-  uploadDocuments(@UserId() userId: string, @Req() req: FastifyRequest) {
-    return this.dealerService.uploadDocuments(userId, req);
-  }
+  // @Post('/upload-documents')
+  // uploadDocuments(@UserId() userId: string, @Req() req: FastifyRequest) {
+  //   return this.dealerService.uploadDocuments(userId, req);
+  // }
 
   /**
    * Lấy thông tin của user

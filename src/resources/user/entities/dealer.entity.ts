@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { compare, hash } from 'bcrypt';
-import { CallbackWithoutResultAndOptionalError, Document, Query, UpdateQuery } from 'mongoose';
+import { CallbackWithoutResultAndOptionalError, Document, UpdateQuery } from 'mongoose';
 
 class Range {
   min: number;

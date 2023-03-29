@@ -1,8 +1,6 @@
-import { Type } from 'class-transformer';
-import { isNotEmpty, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { PaginationQuery } from 'dtos/pagination.dto';
-
+import { IsNotEmpty, IsOptional, Length } from 'class-validator';
 import { SellerDocument } from '../entities/seller.entity';
+import { QueryFilter } from './user.dto';
 
 export class CreateSellerRequest {
   @IsNotEmpty()
@@ -52,7 +50,6 @@ export class SellerResponse {
   email?: string;
   updatedAt: Date;
   createdAt: Date;
-  idGoogle?: string
 
   constructor(user: SellerDocument) {
     this.id = user.id as string;
@@ -64,7 +61,6 @@ export class SellerResponse {
     }
     this.updatedAt = user.updatedAt;
     this.createdAt = user.createdAt;
-    if (user.idGoogle) this.idGoogle = user.idGoogle
   }
 }
 
@@ -89,6 +85,9 @@ export class RegisterSellerRequest {
   @IsNotEmpty()
   @Length(1, 255)
   email: string;
+
+  @IsOptional()
+  idGoogle: string;
 }
 
 export class LoginSellerRequest {
@@ -122,9 +121,9 @@ export class ChangePasswordRequest {
 
 export class ChangePasswordResponse {
   @IsNotEmpty()
-  isSuccess: boolean
+  isSuccess: boolean;
   constructor(success: boolean) {
-    this.isSuccess = success
+    this.isSuccess = success;
   }
 }
 
@@ -133,35 +132,16 @@ export class VerifyFirebaseRequest {
   token: string;
 }
 
-export class GetSellerQuery extends PaginationQuery {
-  search?: string;
-
-  @Type(() => Date)
-  startDate?: Date;
-
-  @Type(() => Date)
-  endDate?: Date;
-
-  sortBy?: number;
-
-  @IsOptional()
-  @IsString()
-  orderBy?: string;
-}
+export class GetSellerQuery extends QueryFilter {}
 
 export class LoginFirebaseResponse {
-  @IsOptional()
-  password: string;
+  accessToken: string;
 
   @IsOptional()
   message: string;
 
-  @IsOptional()
-  token: string;
-
-  constructor(password?: string, message?: string, token?: string) {
-    if (password) this.password = password;
+  constructor(accessToken?: string, message?: string) {
     if (message) this.message = message;
-    if (token) this.token = token;
+    if (accessToken) this.accessToken = accessToken;
   }
 }

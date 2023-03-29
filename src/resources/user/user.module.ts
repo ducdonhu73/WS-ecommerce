@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MailModule } from 'services/mail/mail.module';
 
 import { DealerController } from './dealer.controller';
 import { DealerService } from './dealer.service';
@@ -17,7 +16,6 @@ import { SellerService } from './seller.service';
       { name: PendingDealer.name, schema: PendingDealerSchema },
       { name: Seller.name, schema: SellerSchema },
     ]),
-    MailModule,
   ],
   controllers: [DealerController, SellerController],
   providers: [DealerService, SellerService],

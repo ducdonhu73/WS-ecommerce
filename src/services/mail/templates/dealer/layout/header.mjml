@@ -1,5 +1,0 @@
-<mj-section background-color="#231F20" padding-bottom="40px" padding-top="30px">
-  <mj-column vertical-align="top" width="100%">
-    <mj-image src="https://gear-nz.s3.ap-southeast-2.amazonaws.com/gear-logo.png" width="148px" alt="" />
-  </mj-column>
-</mj-section>
