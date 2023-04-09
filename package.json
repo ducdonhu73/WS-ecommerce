@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.309.0",
     "@fastify/compress": "^6.2.1",
     "@fastify/multipart": "^7.5.0",
     "@fastify/static": "^6.9.0",
@@ -32,6 +33,7 @@
     "@nestjs/schedule": "^2.2.0",
     "@nestjs/swagger": "6.1.4",
     "@types/morgan": "^1.9.4",
+    "aws-sdk": "^2.1353.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -39,6 +41,7 @@
     "jwt-decode": "^3.1.2",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0",
+    "nest-aws-sdk": "^3.0.1",
     "nest-morgan": "^2.0.0",
     "nest-winston": "^1.9.1",
     "nestjs-firebase": "^9.0.0",
