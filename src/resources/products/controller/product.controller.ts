@@ -16,8 +16,8 @@ export class ProductController{
     // }
 
     @Post('add')
-    addProduct(@Req() req: FastifyRequest, @Body() request: AddProductRequest) : Promise<void>{
-        return  this.productService.addProduct(req, request);
+    addProduct(@Body() request: AddProductRequest) : Promise<void>{
+        return  this.productService.addProduct(request);
     }
 
 

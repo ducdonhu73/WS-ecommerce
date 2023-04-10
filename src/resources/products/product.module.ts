@@ -14,8 +14,8 @@ import { S3Service } from 'resources/s3/s3.services';
       ]),
   ],
   controllers: [ProductController],
-  providers: [ProductService, S3Service],
-  exports: [ProductService, S3Service],
+  providers: [ProductService],
+  exports: [ProductService],
   
 })
 export class ProductModule {}

@@ -14,12 +14,10 @@ export class ProductService{
                                             private readonly s3Service: S3Service){}
 
 
-    async addProduct(req: FastifyRequest,request : AddProductRequest) : Promise<void>{
-        const {category_id, product_name, amount, price, description} = request
-        const image = (await this.s3Service.upload(req))[0]?.link;
+    async addProduct(request : AddProductRequest) : Promise<void>{
+        const {category_id, product_name, amount, price, description, image} = request
         await this.ProductModel.create({category_id, product_name, amount, price, description, image})
-        
-        
+    
     }
 
 }

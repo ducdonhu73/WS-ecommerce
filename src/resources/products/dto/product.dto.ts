@@ -22,7 +22,7 @@ export class AddProductRequest{
     
     description: Text;
 
-    // image: String;
+    image: String;
     
 
 }
