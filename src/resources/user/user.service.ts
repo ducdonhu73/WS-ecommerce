@@ -11,8 +11,8 @@ import {
   VerifyFirebaseRequest,
   GetSellerQuery,
   LoginFirebaseResponse,
-} from './dto/seller.dto';
-import { Seller, SellerDocument, SellerStatus } from './entities/seller.entity';
+} from './dto/user.dto';
+import { Seller, SellerDocument, SellerStatus } from './entities/user.entity';
 import jwt from 'jsonwebtoken';
 import { Role } from 'constants/roles';
 import { getAuth } from 'firebase-admin/auth';

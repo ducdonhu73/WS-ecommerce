@@ -43,6 +43,12 @@ export class Seller {
   comparePassword: (candidatePassword: string) => Promise<void>;
 }
 
+export class DocumentFile {
+  name: string;
+  path: string;
+  mimetype: string;
+}
+
 export const SellerSchema = SchemaFactory.createForClass(Seller);
 
 SellerSchema.pre('save', async function () {

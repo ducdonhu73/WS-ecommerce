@@ -1,5 +1,5 @@
 import { Controller, Get, Body, Put, Delete, Post, Query } from '@nestjs/common';
-import { SellerService } from './seller.service';
+import { SellerService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserId } from 'decorators/auth.decorator';
 import {
@@ -13,7 +13,7 @@ import {
   VerifyFirebaseRequest,
   GetSellerQuery,
   LoginFirebaseResponse,
-} from './dto/seller.dto';
+} from './dto/user.dto';
 import { PaginationDataResponse } from 'dtos/pagination.dto';
 
 @ApiTags('Seller')

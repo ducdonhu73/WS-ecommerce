@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document} from 'mongoose';
+import { QueryFilter } from 'resources/user/dto/user.dto';
 
 export type ProductDocument = Product & Document;
 
@@ -19,10 +20,10 @@ export class Product {
   price: number;
 
   @Prop()
-  description: Text;
+  description: string;
 
   @Prop()
-  image: String;
+  image: string;
 
   @Prop()
   updatedAt: Date;
@@ -32,4 +33,6 @@ export class Product {
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
+
+export class GetProductQuery extends QueryFilter{}
 

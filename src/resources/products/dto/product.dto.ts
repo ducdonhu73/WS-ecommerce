@@ -2,6 +2,10 @@ import { IsNotEmpty } from "class-validator";
 
 
 
+export class AllProductRequest{
+
+}
+
 export class AddProductRequest{
     
     @IsNotEmpty()
@@ -18,7 +22,7 @@ export class AddProductRequest{
     
     description: Text;
 
-    image: String;
+    // image: String;
     
 
 }

@@ -1,6 +1,8 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Controller, Get, Body, Put, Delete, Post, Query, Req } from '@nestjs/common';
 import { AddProductRequest, AddProductResponse } from "../dto/product.dto";
 import { ProductService } from "../service/product.service";
+import { FastifyRequest } from 'fastify';
+import { GetProductQuery } from '../entities/product.entities';
 
 
 @Controller('products')
@@ -8,9 +10,14 @@ export class ProductController{
 
     constructor(private readonly productService:ProductService){}
 
+    // @Get('all')
+    // getAllProduct(@Query() query:GetProductQuery): Promise<>{
+    //     return
+    // }
+
     @Post('add')
-    addProduct(@Body() request: AddProductRequest) : Promise<AddProductResponse>{
-        return this.productService.addProduct(request);
+    addProduct(@Req() req: FastifyRequest, @Body() request: AddProductRequest) : Promise<void>{
+        return  this.productService.addProduct(req, request);
     }
 
 
