@@ -6,6 +6,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 // import { ExceptionFormatter, ResponseFormatter } from 'interceptors/response.interceptor';
 import mongoose from 'mongoose';
 import { UserModule } from './resources/user/user.module';
+import {ProductModule} from './resources/products/product.module'
 import { FirebaseModule } from './services/firebase/firebase.module';
 
 mongoose.set('debug', true);
@@ -27,6 +28,7 @@ mongoose.set('debug', true);
     ScheduleModule.forRoot(),
     FirebaseModule.forRoot(),
     UserModule,
+    ProductModule,
   ],
 })
 export class AppModule {}
