@@ -9,6 +9,7 @@ import { UserModule } from './resources/user/user.module';
 import { ProductModule } from './resources/products/product.module';
 import { FirebaseModule } from './services/firebase/firebase.module';
 import { S3Module } from 'resources/s3/s3.module';
+import { CartModule } from 'resources/cart/cart.module';
 
 mongoose.set('debug', true);
 
@@ -31,6 +32,7 @@ mongoose.set('debug', true);
     UserModule,
     ProductModule,
     S3Module,
+    CartModule,
   ],
 })
 export class AppModule {}
