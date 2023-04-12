@@ -10,6 +10,7 @@ import { ProductModule } from './resources/products/product.module';
 import { FirebaseModule } from './services/firebase/firebase.module';
 import { S3Module } from 'resources/s3/s3.module';
 import { CartModule } from 'resources/cart/cart.module';
+import { CategoryModule } from 'resources/categories/category.module';
 
 mongoose.set('debug', true);
 
@@ -31,6 +32,7 @@ mongoose.set('debug', true);
     FirebaseModule.forRoot(),
     UserModule,
     ProductModule,
+    CategoryModule,
     S3Module,
     CartModule,
   ],

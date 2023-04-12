@@ -34,3 +34,4 @@ export class Product {
 export const ProductSchema = SchemaFactory.createForClass(Product);
 
 export class GetProductQuery extends QueryFilter {}
+
