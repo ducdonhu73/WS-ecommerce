@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Put, Delete, Post, Query } from '@nestjs/common';
+import { Controller, Get, Body, Put, Delete, Post, Query, Param } from '@nestjs/common';
 import { SellerService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserId } from 'decorators/auth.decorator';
@@ -40,6 +40,11 @@ export class SellerController {
    */
   @Get('me')
   getMyInfo(@UserId() userId: string): Promise<SellerResponse> {
+    return this.sellerService.getById(userId);
+  }
+
+  @Get(':id')
+  getUserById(@Param('id') userId: string) {
     return this.sellerService.getById(userId);
   }
 

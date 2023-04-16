@@ -6,7 +6,6 @@ export type CategoryDocument = Category & Document;
 
 @Schema({ timestamps: true })
 export class Category {
-
   @Prop({ required: true })
   category_name: string;
 
@@ -26,4 +25,3 @@ export class Category {
 export const CategorySchema = SchemaFactory.createForClass(Category);
 
 export class GetCategoryQuery extends QueryFilter {}
-

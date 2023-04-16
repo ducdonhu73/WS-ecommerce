@@ -1,23 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types, Schema as mongooseSchema } from 'mongoose';
 
 export enum CartStatus {
-  DEPENDING = 'depending',
+  WAITTING = 'waitting',
   BUYED = 'buyed',
 }
 
 @Schema({ timestamps: true })
 export class Cart {
-  @Prop({ required: true })
-  p_id: string;
+  @Prop({ required: true, type: mongooseSchema.Types.ObjectId, ref: 'product' })
+  p_id: Types.ObjectId;
 
-  @Prop({ required: true })
-  u_id: string;
+  @Prop({ required: true, type: mongooseSchema.Types.ObjectId, ref: 'user' })
+  u_id: Types.ObjectId;
 
   @Prop({ required: true })
   quantity: number;
 
-  @Prop({ default: CartStatus.DEPENDING, enum: CartStatus, required: true })
+  @Prop()
+  total: number;
+
+  @Prop({ default: CartStatus.WAITTING, enum: CartStatus, required: true })
   status: CartStatus;
 
   @Prop()

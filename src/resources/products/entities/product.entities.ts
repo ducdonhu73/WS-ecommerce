@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types, Schema as mongooseSchema } from 'mongoose';
 import { QueryFilter } from 'resources/user/dto/user.dto';
 
 export type ProductDocument = Product & Document;
 
 @Schema({ timestamps: true })
 export class Product {
-  @Prop({ required: true })
-  category_id: string;
+  @Prop({ required: true, type: mongooseSchema.Types.ObjectId, ref: 'category' })
+  category_id: Types.ObjectId;
 
   @Prop({ required: true })
   product_name: string;
@@ -34,4 +34,3 @@ export class Product {
 export const ProductSchema = SchemaFactory.createForClass(Product);
 
 export class GetProductQuery extends QueryFilter {}
-

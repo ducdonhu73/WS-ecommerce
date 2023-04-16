@@ -1,22 +1,77 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cart, CartStatus } from './entities/cart.entity';
+import { Cart, CartDocument, CartStatus } from './entities/cart.entity';
 import { Model } from 'mongoose';
 import { AddToCartRequest } from './dto/cart.request.dto';
 import { CartResponse } from './dto/cart.response.dto';
+import { Product } from 'resources/products/entities/product.entities';
+import { Seller } from 'resources/user/entities/user.entity';
+import { mId } from 'utils/helper';
 
 @Injectable()
 export class CartService {
-  constructor(@InjectModel(Cart.name) private CartModel: Model<Cart>) {}
+  constructor(
+    @InjectModel(Cart.name) private CartModel: Model<CartDocument>,
+    @InjectModel(Product.name) private ProductModel: Model<Product>,
+    @InjectModel(Seller.name) private UserModel: Model<Seller>,
+  ) {}
 
   async addProductToCart(request: AddToCartRequest): Promise<CartResponse> {
     const { p_id, u_id, quantity } = request;
-    const cart = await this.CartModel.findOne({ $and: [{ p_id }, { u_id }, { status: CartStatus.DEPENDING }] });
+    const product = await this.ProductModel.findById(p_id);
+    const user = await this.UserModel.findById(u_id);
+
+    if (!product) throw new BadRequestException("product doesn't exist");
+    if (!user) throw new BadRequestException("user doesn't exist");
+    const cart = await this.CartModel.findOne({ $and: [{ p_id }, { u_id }, { status: CartStatus.WAITTING }] });
+    let cartResponse;
     if (cart) {
-      await cart.updateOne({ $set: { quantity: quantity + cart.quantity } });
+      cartResponse = await cart.updateOne({ $set: { quantity: quantity + cart.quantity } });
     } else {
-      await this.CartModel.create({ p_id, u_id, quantity });
+      cartResponse = await this.CartModel.create({ p_id, u_id, quantity });
     }
-    return new CartResponse(cart as Cart);
+    return new CartResponse(cartResponse, user, product);
+  }
+
+  async removeProductFromCart(request: AddToCartRequest): Promise<void> {
+    const { p_id, u_id } = request;
+    const cart = await this.CartModel.findOne({ $and: [{ p_id }, { u_id }, { status: CartStatus.WAITTING }] });
+    if (cart) {
+      await cart.deleteOne();
+    } else {
+      throw new BadRequestException('cart is not exist');
+    }
+  }
+
+  async buyProductInCart(listCartId: string[]): Promise<void> {
+    const listCart = await this.CartModel.find({ $and: [{ _id: listCartId }, { status: CartStatus.WAITTING }] });
+    if (listCart.length === listCartId.length) {
+      listCart.map((c) => {
+        c.updateOne({ status: CartStatus.BUYED });
+      });
+    } else throw new BadRequestException('product is no longer in the cart');
+  }
+
+  async getCartByUserId(userId: string): Promise<CartResponse[]> {
+    const cart = await this.CartModel.aggregate([
+      { $match: { $and: [{ u_id: mId(userId) }, { status: CartStatus.WAITTING }] } },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'p_id',
+          foreignField: '_id',
+          as: 'product',
+          pipeline: [
+            {
+              $project: {
+                __v: 0,
+              },
+            },
+          ],
+        },
+      },
+    ]);
+    const response = cart.map((c) => new CartResponse().constructor2(c as CartResponse));
+    return response;
   }
 }

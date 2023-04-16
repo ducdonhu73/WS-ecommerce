@@ -11,7 +11,7 @@ export class S3Service {
     }
     const files = req.files();
     const s3Client = new S3Client({
-      region: 'us-east-1',
+      region: process.env['AWS_REGION'] ?? '',
       credentials: {
         accessKeyId: process.env['AWS_ACCESS_KEY_ID'] ?? '',
         secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'] ?? '',
@@ -25,7 +25,7 @@ export class S3Service {
       // TODO: move to a new service
       await s3Client.send(
         new PutObjectCommand({
-          Bucket: 'ws-test-ddn',
+          Bucket: process.env['AWS_PUBLIC_BUCKET_NAME'] ?? '',
           Key: key,
           ACL: 'public-read',
           Body: buffer,
