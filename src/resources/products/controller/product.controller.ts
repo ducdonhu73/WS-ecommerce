@@ -1,5 +1,5 @@
-import { Controller, Get, Body, Put, Delete, Post, Param } from '@nestjs/common';
-import { AddProductRequest, ProductResponse, UpdateProductRequest } from '../dto/product.dto';
+import { Controller, Get, Body, Put, Delete, Post, Param, Query } from '@nestjs/common';
+import { AddProductRequest, GetAllProductQuery, ProductResponse, UpdateProductRequest } from '../dto/product.dto';
 import { ProductService } from '../service/product.service';
 
 @Controller('products')
@@ -7,8 +7,8 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  allProduct() {
-    return this.productService.allProduct();
+  allProduct(@Query() query:GetAllProductQuery) {
+    return this.productService.allProduct(query);
   }
 
   @Post('add')
@@ -30,4 +30,6 @@ export class ProductController {
   getProductById(@Param('_id') id: string): Promise<ProductResponse> {
     return this.productService.getProductById(id);
   }
+
+  
 }

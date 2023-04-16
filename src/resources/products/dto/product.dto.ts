@@ -2,6 +2,7 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 import { ProductDocument } from '../entities/product.entities';
 import { Types } from 'mongoose';
 import { CategoryDocument } from 'resources/categories/category.entities';
+import { PaginationQuery } from 'dtos/pagination.dto';
 
 export class AddProductRequest {
   @IsNotEmpty()
@@ -56,6 +57,17 @@ export class UpdateProductRequest {
 //   @IsNotEmpty()
 //   id:string
 // }
+
+export class GetAllProductQuery extends PaginationQuery{
+  @IsOptional()
+  category:string;
+
+  @IsOptional()
+  product_name:string;
+
+  
+  
+}
 
 export class ProductResponse {
   id: string;

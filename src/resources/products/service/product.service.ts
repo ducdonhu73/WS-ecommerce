@@ -1,9 +1,10 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Product } from '../entities/product.entities';
-import { Model } from 'mongoose';
-import { AddProductRequest, ProductResponse, UpdateProductRequest } from '../dto/product.dto';
+import { Product, ProductDocument } from '../entities/product.entities';
+import { FilterQuery, Model } from 'mongoose';
+import { AddProductRequest, GetAllProductQuery, ProductResponse, UpdateProductRequest } from '../dto/product.dto';
 import { BadRequestException } from '@nestjs/common';
 import { Category, CategoryDocument } from 'resources/categories/category.entities';
+import { mId } from 'utils/helper';
 
 export class ProductService {
   constructor(
@@ -11,8 +12,16 @@ export class ProductService {
     @InjectModel(Category.name) private CategoryModel: Model<CategoryDocument>,
   ) {}
 
-  async allProduct(): Promise<ProductResponse[]> {
-    return this.ProductModel.find();
+  async allProduct(query:GetAllProductQuery): Promise<ProductResponse[]> {
+    const {category, product_name, limit, page} = query;
+    const filter: FilterQuery<ProductDocument> = {};
+    if(category){
+      filter.category_id  = mId(category);
+    }
+    if(product_name){
+      filter.product_name = { $regex: product_name};
+    }
+    return this.ProductModel.find(filter);
   }
 
   async addProduct(request: AddProductRequest): Promise<void> {
@@ -43,7 +52,7 @@ export class ProductService {
     if (!product) {
       throw new BadRequestException('Product not found');
     }
-    console.log(product);
+    // console.log(product);
     return new ProductResponse(product);
   }
 }
