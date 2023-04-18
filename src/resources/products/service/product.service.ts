@@ -12,14 +12,14 @@ export class ProductService {
     @InjectModel(Category.name) private CategoryModel: Model<CategoryDocument>,
   ) {}
 
-  async allProduct(query:GetAllProductQuery): Promise<ProductResponse[]> {
-    const {category, product_name, limit, page} = query;
+  async allProduct(query: GetAllProductQuery): Promise<ProductResponse[]> {
+    const { category, product_name, limit, page } = query;
     const filter: FilterQuery<ProductDocument> = {};
-    if(category){
-      filter.category_id  = mId(category);
+    if (category) {
+      filter.category_id = mId(category);
     }
-    if(product_name){
-      filter.product_name = { $regex: product_name};
+    if (product_name) {
+      filter.product_name = { $regex: product_name };
     }
     return this.ProductModel.find(filter);
   }

@@ -1,5 +1,5 @@
 import { IsInt, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { SellerDocument } from '../entities/user.entity';
+import { UserDocument } from '../entities/user.entity';
 import { PaginationQuery } from 'dtos/pagination.dto';
 import { Type } from 'class-transformer';
 
@@ -22,7 +22,7 @@ export class QueryFilter extends PaginationQuery {
   orderBy?: number;
 }
 
-export class CreateSellerRequest {
+export class CreateUserRequest {
   @IsNotEmpty()
   @Length(1, 255)
   firstName: string;
@@ -43,7 +43,7 @@ export class CreateSellerRequest {
   password: string;
 }
 
-export class UpdateSellerRequest {
+export class UpdateUserRequest {
   @IsOptional()
   @Length(0, 255)
   firstName?: string;
@@ -57,12 +57,12 @@ export class UpdateSellerRequest {
   email?: string;
 }
 
-export class DeleteSellerRequest {
+export class DeleteUserRequest {
   @IsNotEmpty()
   password: string;
 }
 
-export class SellerResponse {
+export class UserResponse {
   id: string;
   firstName: string;
   lastName: string;
@@ -71,7 +71,7 @@ export class SellerResponse {
   updatedAt: Date;
   createdAt: Date;
 
-  constructor(user: SellerDocument) {
+  constructor(user: UserDocument) {
     this.id = user.id as string;
     this.firstName = user.firstName;
     this.lastName = user.lastName;
@@ -84,7 +84,7 @@ export class SellerResponse {
   }
 }
 
-export class RegisterSellerRequest {
+export class RegisterUserRequest {
   @IsNotEmpty()
   @Length(1, 255)
   firstName: string;
@@ -110,7 +110,7 @@ export class RegisterSellerRequest {
   idGoogle: string;
 }
 
-export class LoginSellerRequest {
+export class LoginUserRequest {
   @IsNotEmpty()
   email: string;
 
@@ -152,7 +152,7 @@ export class VerifyFirebaseRequest {
   token: string;
 }
 
-export class GetSellerQuery extends QueryFilter {}
+export class GetUserQuery extends QueryFilter {}
 
 export class LoginFirebaseResponse {
   accessToken: string;

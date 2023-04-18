@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { AddToCartRequest } from './dto/cart.request.dto';
 import { CartResponse } from './dto/cart.response.dto';
 import { Product } from 'resources/products/entities/product.entities';
-import { Seller } from 'resources/user/entities/user.entity';
+import { User } from 'resources/user/entities/user.entity';
 import { mId } from 'utils/helper';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class CartService {
   constructor(
     @InjectModel(Cart.name) private CartModel: Model<CartDocument>,
     @InjectModel(Product.name) private ProductModel: Model<Product>,
-    @InjectModel(Seller.name) private UserModel: Model<Seller>,
+    @InjectModel(User.name) private UserModel: Model<User>,
   ) {}
 
   async addProductToCart(request: AddToCartRequest): Promise<CartResponse> {

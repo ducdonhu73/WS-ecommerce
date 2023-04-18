@@ -58,15 +58,12 @@ export class UpdateProductRequest {
 //   id:string
 // }
 
-export class GetAllProductQuery extends PaginationQuery{
+export class GetAllProductQuery extends PaginationQuery {
   @IsOptional()
-  category:string;
+  category: string;
 
   @IsOptional()
-  product_name:string;
-
-  
-  
+  product_name: string;
 }
 
 export class ProductResponse {
