@@ -7,6 +7,10 @@ import { BadRequestException } from '@nestjs/common';
 export class CategoryService {
   constructor(@InjectModel(Category.name) private CategoryModel: Model<Category>) {}
 
+  async allCategory() :Promise<CategoryResponse[]>{
+    return this.CategoryModel.find();
+  }
+
   async addCategory(request: AddCategoryRequest): Promise<void> {
     const { category_name, description, image } = request;
     await this.CategoryModel.create({ category_name, description, image });
