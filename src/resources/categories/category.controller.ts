@@ -6,6 +6,11 @@ import { AddCategoryRequest, CategoryResponse, UpdateCategoryRequest } from './c
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @Get('all')
+  allCategory(){
+    return this.categoryService.allCategory();
+  }
+
   @Post('add')
   addCategory(@Body() request: AddCategoryRequest): Promise<void> {
     return this.categoryService.addCategory(request);
