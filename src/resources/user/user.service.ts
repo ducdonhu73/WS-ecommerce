@@ -228,6 +228,7 @@ export class UserService {
       email,
       password,
       idGoogle,
+      role: Role.ADMIN,
     });
     const authToken = this.createAdminToken(newSeller.id as string);
     return new LoginResponse(authToken);
@@ -254,5 +255,4 @@ export class UserService {
     const authToken = this.createAdminToken(admin.id as string);
     return new LoginResponse(authToken);
   }
-
 }

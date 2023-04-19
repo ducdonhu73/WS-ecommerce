@@ -2,6 +2,7 @@ import { IsInt, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator
 import { UserDocument } from '../entities/user.entity';
 import { PaginationQuery } from 'dtos/pagination.dto';
 import { Type } from 'class-transformer';
+import { Role } from 'constants/roles';
 
 export class QueryFilter extends PaginationQuery {
   search?: string;
@@ -70,6 +71,7 @@ export class UserResponse {
   email?: string;
   updatedAt: Date;
   createdAt: Date;
+  role: Role;
 
   constructor(user: UserDocument) {
     this.id = user.id as string;
@@ -81,6 +83,7 @@ export class UserResponse {
     }
     this.updatedAt = user.updatedAt;
     this.createdAt = user.createdAt;
+    this.role = user.role;
   }
 }
 
