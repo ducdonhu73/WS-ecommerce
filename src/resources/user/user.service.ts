@@ -158,6 +158,21 @@ export class SellerService {
       secretKey,
     );
   }
+  private createAdminToken(userId: string): string {
+    const secretKey = process.env['JWT_SECRET'];
+
+    if (!secretKey) {
+      throw new BadRequestException('Secret key not found');
+    }
+
+    return jwt.sign(
+      {
+        id: userId,
+        role: Role.ADMIN,
+      },
+      secretKey,
+    );
+  }
 
   async loginFirebase(request: VerifyFirebaseRequest): Promise<LoginFirebaseResponse> {
     const { token } = request;
@@ -197,4 +212,47 @@ export class SellerService {
     const authToken = this.createToken(newSeller.id as string);
     return new LoginFirebaseResponse(authToken, 'Created new seller account with ' + sign_in_provider);
   }
+
+  async adminRegister(request: RegisterSellerRequest): Promise<LoginResponse> {
+    const filter = { phoneNumber: request.phoneNumber };
+    const Seller = await this.SellerModel.findOne(filter).exec();
+    if (Seller) {
+      throw new BadRequestException('Phone number exist');
+    }
+    const { firstName, lastName, phoneNumber, email, password, confirmPassword, idGoogle } = request;
+    if (confirmPassword !== password) throw new BadRequestException('Passwords are not the same!');
+    const newSeller = await this.SellerModel.create({
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      password,
+      idGoogle,
+    });
+    const authToken = this.createAdminToken(newSeller.id as string);
+    return new LoginResponse(authToken);
+  }
+  async adminLogin(request: LoginSellerRequest): Promise<LoginResponse> {
+    const { email, password } = request;
+
+    const user = await this.SellerModel.findOne({ email }).exec();
+    if (!user) {
+      throw new BadRequestException('No User found');
+    }
+
+    await user.comparePassword(password);
+
+    if (user.status === SellerStatus.INACTIVE) {
+      throw new BadRequestException('Seller is inactive');
+    }
+
+    if (user.status === SellerStatus.DELETED) {
+      throw new BadRequestException('Seller is deleted');
+    }
+    // const authToken = await this.auth.createCustomToken(user.id as string);
+
+    const authToken = this.createAdminToken(user.id as string);
+    return new LoginResponse(authToken);
+  }
+
 }
