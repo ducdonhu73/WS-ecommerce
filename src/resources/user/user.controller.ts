@@ -15,6 +15,8 @@ import {
   LoginFirebaseResponse,
 } from './dto/user.dto';
 import { PaginationDataResponse } from 'dtos/pagination.dto';
+import { Role } from 'constants/roles';
+import { Roles } from 'decorators/roles.decorator';
 
 @ApiTags('User')
 @Controller('users')
@@ -66,5 +68,15 @@ export class UserController {
   @Post('login-firebase')
   verifyLoginFirebase(@Body() request: VerifyFirebaseRequest): Promise<LoginFirebaseResponse> {
     return this.UserService.loginFirebase(request);
+  }
+
+  @Post('admin-register')
+  adminRegister(@Body() request: RegisterUserRequest): Promise<LoginResponse> {
+    return this.UserService.adminRegister(request);
+  }
+
+  @Post('admin-login')
+  adminLogin(@Body() request: LoginUserRequest): Promise<LoginResponse> {
+    return this.UserService.adminLogin(request);
   }
 }

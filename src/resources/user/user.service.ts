@@ -213,15 +213,15 @@ export class UserService {
     return new LoginFirebaseResponse(authToken, 'Created new User account with ' + sign_in_provider);
   }
 
-  async adminRegister(request: RegisterSellerRequest): Promise<LoginResponse> {
+  async adminRegister(request: RegisterUserRequest): Promise<LoginResponse> {
     const filter = { phoneNumber: request.phoneNumber };
-    const Seller = await this.SellerModel.findOne(filter).exec();
-    if (Seller) {
+    const admin = await this.UserModel.findOne(filter).exec();
+    if (admin) {
       throw new BadRequestException('Phone number exist');
     }
     const { firstName, lastName, phoneNumber, email, password, confirmPassword, idGoogle } = request;
     if (confirmPassword !== password) throw new BadRequestException('Passwords are not the same!');
-    const newSeller = await this.SellerModel.create({
+    const newSeller = await this.UserModel.create({
       firstName,
       lastName,
       phoneNumber,
@@ -232,26 +232,26 @@ export class UserService {
     const authToken = this.createAdminToken(newSeller.id as string);
     return new LoginResponse(authToken);
   }
-  async adminLogin(request: LoginSellerRequest): Promise<LoginResponse> {
+  async adminLogin(request: LoginUserRequest): Promise<LoginResponse> {
     const { email, password } = request;
 
-    const user = await this.SellerModel.findOne({ email }).exec();
-    if (!user) {
+    const admin = await this.UserModel.findOne({ email }).exec();
+    if (!admin) {
       throw new BadRequestException('No User found');
     }
 
-    await user.comparePassword(password);
+    await admin.comparePassword(password);
 
-    if (user.status === SellerStatus.INACTIVE) {
+    if (admin.status === UserStatus.INACTIVE) {
       throw new BadRequestException('Seller is inactive');
     }
 
-    if (user.status === SellerStatus.DELETED) {
+    if (admin.status === UserStatus.DELETED) {
       throw new BadRequestException('Seller is deleted');
     }
     // const authToken = await this.auth.createCustomToken(user.id as string);
 
-    const authToken = this.createAdminToken(user.id as string);
+    const authToken = this.createAdminToken(admin.id as string);
     return new LoginResponse(authToken);
   }
 
