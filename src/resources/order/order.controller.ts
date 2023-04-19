@@ -8,9 +8,15 @@ import { ApproveOrderRequest } from './dto/order.request.dto';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
+  @Post('aprrove')
   @Roles(Role.ADMIN)
   approveOrder(@Body() request: ApproveOrderRequest) {
     return this.orderService.approveOrder(request.orderId);
+  }
+
+  @Post('aprrove')
+  @Roles(Role.ADMIN)
+  rejectOrder(@Body() request: ApproveOrderRequest) {
+    return this.orderService.rejectOrder(request.orderId);
   }
 }

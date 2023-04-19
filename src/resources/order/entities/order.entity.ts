@@ -4,6 +4,7 @@ import { Document, Types, Schema as mongooseSchema } from 'mongoose';
 export enum OrderStatus {
   PENDING = 'pending',
   SUCCESS = 'success',
+  FAILD = 'faild',
 }
 
 @Schema({ timestamps: true })

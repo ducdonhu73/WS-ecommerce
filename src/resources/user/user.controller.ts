@@ -15,8 +15,6 @@ import {
   LoginFirebaseResponse,
 } from './dto/user.dto';
 import { PaginationDataResponse } from 'dtos/pagination.dto';
-import { Role } from 'constants/roles';
-import { Roles } from 'decorators/roles.decorator';
 
 @ApiTags('User')
 @Controller('users')

@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Product } from 'resources/products/entities/product.entities';
 import { User } from 'resources/user/entities/user.entity';
 import { mId } from 'utils/helper';
-import { Order } from './entities/order.entity';
+import { Order, OrderStatus } from './entities/order.entity';
 
 @Injectable()
 export class OrderService {
@@ -16,5 +16,17 @@ export class OrderService {
 
   async approveOrder(orderId: string): Promise<void> {
     const order = this.OrderModel.findById(orderId);
+    if (!order) {
+      throw new BadRequestException('Order is not existed');
+    }
+    order.updateOne({ status: OrderStatus.SUCCESS });
+  }
+
+  async rejectOrder(orderId: string): Promise<void> {
+    const order = this.OrderModel.findById(orderId);
+    if (!order) {
+      throw new BadRequestException('Order is not existed');
+    }
+    order.updateOne({ status: OrderStatus.FAILD });
   }
 }

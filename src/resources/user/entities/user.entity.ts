@@ -2,6 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { compare, hash } from 'bcrypt';
 import { Document, UpdateQuery } from 'mongoose';
+import { Role } from 'constants/roles';
 
 export enum UserStatus {
   ACTIVE = 'active',
@@ -31,6 +32,8 @@ export class User {
   @Prop({ default: UserStatus.ACTIVE, enum: UserStatus, required: true })
   status: UserStatus;
 
+  @Prop({ default: Role.USER, enum: Role })
+  role: Role;
   @Prop()
   updatedAt: Date;
 
