@@ -221,7 +221,7 @@ export class UserService {
     }
     const { firstName, lastName, phoneNumber, email, password, confirmPassword, idGoogle } = request;
     if (confirmPassword !== password) throw new BadRequestException('Passwords are not the same!');
-    const newSeller = await this.UserModel.create({
+    const newAdmin = await this.UserModel.create({
       firstName,
       lastName,
       phoneNumber,
@@ -229,7 +229,7 @@ export class UserService {
       password,
       idGoogle,
     });
-    const authToken = this.createAdminToken(newSeller.id as string);
+    const authToken = this.createAdminToken(newAdmin.id as string);
     return new LoginResponse(authToken);
   }
   async adminLogin(request: LoginUserRequest): Promise<LoginResponse> {

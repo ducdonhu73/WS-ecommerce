@@ -25,14 +25,14 @@ export class ProductService {
   }
 
   async addProduct(request: AddProductRequest): Promise<void> {
-    const { category_name, product_name, amount, price, description, image } = request;
+    const { category_name, product_name, amount, price, description, image, ngaysx, hsd, nhasx } = request;
     const category = await this.CategoryModel.findOne({ category_name });
     if (!category) throw new BadRequestException('category is not exist');
-    await this.ProductModel.create({ category_id: category.id, product_name, amount, price, description, image });
+    await this.ProductModel.create({ category_id: category.id, product_name, amount, price, description, image, ngaysx, hsd, nhasx});
   }
 
   async updateProduct(productId: string, updateProductRequest: UpdateProductRequest): Promise<void> {
-    const { category_id, product_name, amount, price, description, image } = updateProductRequest;
+    const { category_id, product_name, amount, price, description, image, ngaysx, hsd, nhasx } = updateProductRequest;
     await this.ProductModel.findByIdAndUpdate(productId, {
       category_id,
       product_name,
@@ -40,6 +40,9 @@ export class ProductService {
       price,
       description,
       image,
+      ngaysx, 
+      hsd, 
+      nhasx
     });
   }
 

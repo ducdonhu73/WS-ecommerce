@@ -22,6 +22,15 @@ export class AddProductRequest {
 
   @IsNotEmpty()
   image: string;
+
+  @IsNotEmpty()
+  ngaysx : Date;
+
+  @IsNotEmpty()
+  hsd : Date;
+
+  @IsNotEmpty()
+  nhasx: string;
 }
 
 export class AddProductResponse {
@@ -51,6 +60,15 @@ export class UpdateProductRequest {
 
   @IsOptional()
   image: string;
+
+  @IsOptional()
+  ngaysx : Date;
+
+  @IsOptional()
+  hsd : Date;
+
+  @IsOptional()
+  nhasx: string;
 }
 
 // export class DeleteProductRequest{
@@ -75,6 +93,9 @@ export class ProductResponse {
   price: number;
   description?: string;
   image?: string;
+  ngaysx : Date;
+  hsd : Date;
+  nhasx: string;
   updatedAt: Date;
   createdAt: Date;
 
@@ -91,6 +112,9 @@ export class ProductResponse {
     if (product.image) {
       this.image = product.image;
     }
+    this.ngaysx = product.ngaysx;
+    this.hsd = product.hsd;
+    this.nhasx = product.nhasx;
     this.updatedAt = product.updatedAt;
     this.createdAt = product.createdAt;
   }

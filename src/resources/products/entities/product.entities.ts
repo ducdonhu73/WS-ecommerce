@@ -24,6 +24,15 @@ export class Product {
   @Prop()
   image: string;
 
+  @Prop({ required: true })
+  ngaysx : Date;
+
+  @Prop({ required: true })
+  hsd : Date;
+
+  @Prop({ required: true })
+  nhasx : string;
+
   @Prop()
   updatedAt: Date;
 
