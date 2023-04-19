@@ -7,7 +7,7 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  allProduct(@Query() query:GetAllProductQuery) {
+  allProduct(@Query() query: GetAllProductQuery) {
     return this.productService.allProduct(query);
   }
 
@@ -30,6 +30,4 @@ export class ProductController {
   getProductById(@Param('_id') id: string): Promise<ProductResponse> {
     return this.productService.getProductById(id);
   }
-
-  
 }

@@ -3,16 +3,16 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { compare, hash } from 'bcrypt';
 import { Document, UpdateQuery } from 'mongoose';
 
-export enum SellerStatus {
+export enum UserStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   DELETED = 'deleted',
 }
 
-export type SellerDocument = Seller & Document;
+export type UserDocument = User & Document;
 
 @Schema({ timestamps: true })
-export class Seller {
+export class User {
   @Prop({ required: true })
   firstName: string;
 
@@ -28,8 +28,8 @@ export class Seller {
   @Prop({ required: true })
   password: string;
 
-  @Prop({ default: SellerStatus.ACTIVE, enum: SellerStatus, required: true })
-  status: SellerStatus;
+  @Prop({ default: UserStatus.ACTIVE, enum: UserStatus, required: true })
+  status: UserStatus;
 
   @Prop()
   updatedAt: Date;
@@ -49,16 +49,16 @@ export class DocumentFile {
   mimetype: string;
 }
 
-export const SellerSchema = SchemaFactory.createForClass(Seller);
+export const UserSchema = SchemaFactory.createForClass(User);
 
-SellerSchema.pre('save', async function () {
+UserSchema.pre('save', async function () {
   const password = this.get('password') as string;
   const hashed = await hash(password, 10);
   this.set('password', hashed);
 });
 
-SellerSchema.pre('updateOne', async function () {
-  const update = this.getUpdate() as UpdateQuery<SellerDocument>;
+UserSchema.pre('updateOne', async function () {
+  const update = this.getUpdate() as UpdateQuery<UserDocument>;
   if (update['password'] && typeof update['password'] === 'string') {
     const password = update['password'];
     const hashed = await hash(password, 10);
@@ -66,7 +66,7 @@ SellerSchema.pre('updateOne', async function () {
   }
 });
 
-SellerSchema.methods['comparePassword'] = async function (candidatePassword: string) {
+UserSchema.methods['comparePassword'] = async function (candidatePassword: string) {
   const passwordValid = await compare(candidatePassword, this['password'] as string);
 
   if (!passwordValid) {
