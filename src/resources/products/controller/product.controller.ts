@@ -15,13 +15,13 @@ export class ProductController {
 
   @Roles(Role.ADMIN)
   @Post('add')
-  addProduct(@Body() request: AddProductRequest): Promise<void> {
+  addProduct(@Body() request: AddProductRequest) {
     return this.productService.addProduct(request);
   }
 
   @Roles(Role.ADMIN)
   @Put('update/:_id')
-  updateProduct(@Param('_id') id: string, @Body() request: UpdateProductRequest): Promise<void> {
+  updateProduct(@Param('_id') id: string, @Body() request: UpdateProductRequest) {
     return this.productService.updateProduct(id, request);
   }
 

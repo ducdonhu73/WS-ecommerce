@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ProductDocument } from '../entities/product.entities';
 import { Types } from 'mongoose';
 import { CategoryDocument } from 'resources/categories/category.entities';
@@ -24,10 +24,10 @@ export class AddProductRequest {
   image: string;
 
   @IsNotEmpty()
-  ngaysx : Date;
+  ngaysx: Date;
 
   @IsNotEmpty()
-  hsd : Date;
+  hsd: Date;
 
   @IsNotEmpty()
   nhasx: string;
@@ -43,31 +43,40 @@ export class AddProductResponse {
 }
 
 export class UpdateProductRequest {
-  @IsOptional()
-  category_id: string;
+  @IsNotEmpty()
+  @IsString()
+  category_name: string;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
   product_name: string;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsNumber()
   amount: number;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsNumber()
   price: number;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
   description: string;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
   image: string;
 
-  @IsOptional()
-  ngaysx : Date;
+  @IsNotEmpty()
+  @IsDateString()
+  ngaysx: Date;
 
-  @IsOptional()
-  hsd : Date;
+  @IsNotEmpty()
+  @IsDateString()
+  hsd: Date;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
   nhasx: string;
 }
 
@@ -85,7 +94,7 @@ export class GetAllProductQuery extends PaginationQuery {
 }
 
 export class ProductResponse {
-  id: string;
+  _id: string;
   category_id: Types.ObjectId;
   category_name: string;
   product_name: string;
@@ -93,14 +102,14 @@ export class ProductResponse {
   price: number;
   description?: string;
   image?: string;
-  ngaysx : Date;
-  hsd : Date;
+  ngaysx: Date;
+  hsd: Date;
   nhasx: string;
   updatedAt: Date;
   createdAt: Date;
 
   constructor(product: ProductDocument, category?: CategoryDocument) {
-    this.id = product.id as string;
+    this._id = product.id as string;
     if (category) this.category_name = category.category_name;
     else this.category_id = product.category_id;
     this.product_name = product.product_name;

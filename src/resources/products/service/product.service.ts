@@ -24,26 +24,45 @@ export class ProductService {
     return this.ProductModel.find(filter);
   }
 
-  async addProduct(request: AddProductRequest): Promise<void> {
+  async addProduct(request: AddProductRequest): Promise<ProductResponse> {
     const { category_name, product_name, amount, price, description, image, ngaysx, hsd, nhasx } = request;
     const category = await this.CategoryModel.findOne({ category_name });
     if (!category) throw new BadRequestException('category is not exist');
-    await this.ProductModel.create({ category_id: category.id, product_name, amount, price, description, image, ngaysx, hsd, nhasx});
-  }
-
-  async updateProduct(productId: string, updateProductRequest: UpdateProductRequest): Promise<void> {
-    const { category_id, product_name, amount, price, description, image, ngaysx, hsd, nhasx } = updateProductRequest;
-    await this.ProductModel.findByIdAndUpdate(productId, {
-      category_id,
+    const product = await this.ProductModel.create({
+      category_id: category.id,
       product_name,
       amount,
       price,
       description,
       image,
-      ngaysx, 
-      hsd, 
-      nhasx
+      ngaysx,
+      hsd,
+      nhasx,
     });
+    return new ProductResponse(product);
+  }
+
+  async updateProduct(productId: string, updateProductRequest: UpdateProductRequest): Promise<ProductResponse> {
+    const { category_name, product_name, amount, price, description, image, ngaysx, hsd, nhasx } = updateProductRequest;
+    const category = await this.CategoryModel.findOne({ category_name });
+    if (!category) {
+      throw new BadRequestException('Category is not exist');
+    }
+    const product = await this.ProductModel.findByIdAndUpdate(productId, {
+      category_id: category.id,
+      product_name,
+      amount,
+      price,
+      description,
+      image,
+      ngaysx,
+      hsd,
+      nhasx,
+    });
+    if (!product) {
+      throw new BadRequestException('product is not exist');
+    }
+    return new ProductResponse(product);
   }
 
   async deleteProduct(productId: string): Promise<void> {
@@ -55,7 +74,10 @@ export class ProductService {
     if (!product) {
       throw new BadRequestException('Product not found');
     }
-    // console.log(product);
-    return new ProductResponse(product);
+    const cate = await this.CategoryModel.findById(product.category_id);
+    if (!cate) {
+      throw new BadRequestException('not found category of product');
+    }
+    return new ProductResponse(product, cate);
   }
 }

@@ -61,7 +61,8 @@ export class UserService {
     }
     // const authToken = await this.auth.createCustomToken(user.id as string);
 
-    const authToken = this.createToken(user.id as string);
+    const authToken =
+      user.role === Role.ADMIN ? this.createAdminToken(user.id as string) : this.createToken(user.id as string);
     return new LoginResponse(authToken);
   }
 
