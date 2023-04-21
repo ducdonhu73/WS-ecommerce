@@ -19,7 +19,7 @@ export class ProductService {
       filter.category_id = mId(category);
     }
     if (product_name) {
-      filter.product_name = { $regex: product_name };
+      filter.product_name = { $regex: new RegExp(`${product_name}`, 'i') };
     }
     return this.ProductModel.find(filter);
   }
