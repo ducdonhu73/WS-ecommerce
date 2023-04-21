@@ -16,8 +16,8 @@ export class CartService {
     @InjectModel(User.name) private UserModel: Model<User>,
   ) {}
 
-  async addProductToCart(request: AddToCartRequest): Promise<CartResponse> {
-    const { p_id, u_id, quantity } = request;
+  async addProductToCart(u_id: string, request: AddToCartRequest): Promise<CartResponse> {
+    const { p_id, quantity } = request;
     const product = await this.ProductModel.findById(p_id);
     const user = await this.UserModel.findById(u_id);
 
@@ -33,9 +33,8 @@ export class CartService {
     return new CartResponse(cartResponse, user, product);
   }
 
-  async removeProductFromCart(request: AddToCartRequest): Promise<void> {
-    const { p_id, u_id } = request;
-    const cart = await this.CartModel.findOne({ $and: [{ p_id }, { u_id }, { status: CartStatus.WAITTING }] });
+  async removeProductFromCart(u_id: string, cartId: string): Promise<void> {
+    const cart = await this.CartModel.findById(cartId);
     if (cart) {
       await cart.deleteOne();
     } else {
@@ -69,6 +68,9 @@ export class CartService {
             },
           ],
         },
+      },
+      {
+        $unwind: '$product',
       },
     ]);
     const response = cart.map((c) => new CartResponse().constructor2(c as CartResponse));

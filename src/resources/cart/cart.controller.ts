@@ -1,18 +1,24 @@
-import { Body, Controller, Post, Get, Param } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Delete } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { AddToCartRequest, BuyProductRequest } from './dto/cart.request.dto';
+import { AddToCartRequest, BuyProductRequest, RemoveFromCartRequest } from './dto/cart.request.dto';
+import { UserId } from 'decorators/auth.decorator';
 
 @Controller('carts')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Post('add-to-cart')
-  addToCart(@Body() request: AddToCartRequest) {
-    return this.cartService.addProductToCart(request);
+  addToCart(@UserId() userId: string, @Body() request: AddToCartRequest) {
+    return this.cartService.addProductToCart(userId, request);
   }
 
-  @Get(':id')
-  getCartByUserId(@Param('id') id: string) {
+  @Delete('remove')
+  removeCart(@UserId() userId: string, @Body() request: RemoveFromCartRequest) {
+    return this.cartService.removeProductFromCart(userId, request.cartId);
+  }
+
+  @Get()
+  getCartByUserId(@UserId() id: string) {
     return this.cartService.getCartByUserId(id);
   }
 

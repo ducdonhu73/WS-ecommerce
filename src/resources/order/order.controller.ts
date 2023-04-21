@@ -14,7 +14,7 @@ export class OrderController {
     return this.orderService.approveOrder(request.orderId);
   }
 
-  @Post('aprrove')
+  @Post('reject')
   @Roles(Role.ADMIN)
   rejectOrder(@Body() request: ApproveOrderRequest) {
     return this.orderService.rejectOrder(request.orderId);
