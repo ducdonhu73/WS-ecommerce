@@ -13,7 +13,8 @@ import { CartModule } from 'resources/cart/cart.module';
 import { CategoryModule } from 'resources/categories/category.module';
 import { RolesGuard } from 'guards/roles.guard';
 import { OrdertModule } from 'resources/order/order.module';
-import { HistoryModule } from 'resources/history/history.module';
+import { PaymenttModule } from 'resources/payment/payment.module';
+import { StatisticModule } from 'resources/statistic/statistic.module';
 
 mongoose.set('debug', true);
 
@@ -40,7 +41,8 @@ mongoose.set('debug', true);
     S3Module,
     CartModule,
     OrdertModule,
-    HistoryModule,
+    StatisticModule,
+    PaymenttModule,
   ],
 })
 export class AppModule {}

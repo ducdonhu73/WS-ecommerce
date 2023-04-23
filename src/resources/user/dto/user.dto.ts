@@ -75,6 +75,7 @@ export class UserResponse {
 
   constructor(user: UserDocument) {
     this.id = user.id as string;
+    if (user._id) this.id = user._id;
     this.firstName = user.firstName;
     this.lastName = user.lastName;
     if (user.phoneNumber) this.phoneNumber = user.phoneNumber;

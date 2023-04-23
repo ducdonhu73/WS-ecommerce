@@ -1,11 +1,10 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-
 import { Product, ProductSchema } from 'resources/products/entities/product.entities';
 import { User, UserSchema } from 'resources/user/entities/user.entity';
-import { HistoryController } from './history.controller';
-import { HistoryService } from './history.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Module } from '@nestjs/common';
 import { Order, OrderSchema } from 'resources/order/entities/order.entity';
+import { PaymentController } from './payment.controller';
+import { PaymentService } from './payment.service';
 
 @Module({
   imports: [
@@ -15,8 +14,8 @@ import { Order, OrderSchema } from 'resources/order/entities/order.entity';
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [HistoryController],
-  providers: [HistoryService],
-  exports: [HistoryService],
+  controllers: [PaymentController],
+  providers: [PaymentService],
+  exports: [PaymentService],
 })
-export class HistoryModule {}
+export class PaymenttModule {}

@@ -16,6 +16,9 @@ export class Order {
   u_id: Types.ObjectId;
 
   @Prop()
+  quantity: number;
+
+  @Prop()
   total: number;
 
   @Prop({ default: OrderStatus.PENDING, enum: OrderStatus, required: true })

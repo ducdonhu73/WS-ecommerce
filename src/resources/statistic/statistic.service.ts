@@ -1,25 +1,31 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
+import { Order, OrderDocument, OrderStatus } from 'resources/order/entities/order.entity';
 import { Product } from 'resources/products/entities/product.entities';
 import { User } from 'resources/user/entities/user.entity';
+import { StatisticRequest } from './dto/statistic.request.dto';
 import { mId } from 'utils/helper';
-import { Order, OrderStatus } from './entities/order.entity';
-import { OrderResponse } from './dto/order.response.dto';
+import { StatisticResponse } from './dto/statistic.response.dto';
 
 @Injectable()
-export class OrderService {
+export class StatisticService {
   constructor(
     @InjectModel(Order.name) private OrderModel: Model<Order>,
     @InjectModel(Product.name) private ProductModel: Model<Product>,
     @InjectModel(User.name) private UserModel: Model<User>,
   ) {}
-
-  async getAllOrder(): Promise<OrderResponse[]> {
+  async getAllHistories(request: StatisticRequest): Promise<any> {
+    const { userId, productId } = request;
+    console.log(userId);
+    const filters: FilterQuery<OrderDocument> = {};
+    filters.status = OrderStatus.SUCCESS;
+    if (userId) filters.u_id = mId(userId);
+    if (productId) filters.p_id = mId(productId);
     return (
       await this.OrderModel.aggregate([
         {
-          $match: { status: OrderStatus.PENDING },
+          $match: filters,
         },
         {
           $lookup: {
@@ -30,9 +36,6 @@ export class OrderService {
           },
         },
         {
-          $unwind: '$user',
-        },
-        {
           $lookup: {
             from: 'products',
             as: 'product',
@@ -40,25 +43,7 @@ export class OrderService {
             localField: 'p_id',
           },
         },
-        {
-          $unwind: '$product',
-        },
       ])
-    ).map((e) => new OrderResponse(e));
-  }
-  async approveOrder(orderId: string): Promise<void> {
-    const order = this.OrderModel.findById(orderId);
-    if (!order) {
-      throw new BadRequestException('Order is not existed');
-    }
-    await order.updateOne({ status: OrderStatus.SUCCESS });
-  }
-
-  async rejectOrder(orderId: string): Promise<void> {
-    const order = this.OrderModel.findById(orderId);
-    if (!order) {
-      throw new BadRequestException('Order is not existed');
-    }
-    await order.updateOne({ status: OrderStatus.FAILD });
+    ).map((o) => new StatisticResponse(o as OrderDocument));
   }
 }

@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Product, ProductDocument } from '../entities/product.entities';
+import { Product, ProductDocument, ProductStatus } from '../entities/product.entities';
 import { FilterQuery, Model } from 'mongoose';
 import { AddProductRequest, GetAllProductQuery, ProductResponse, UpdateProductRequest } from '../dto/product.dto';
 import { BadRequestException } from '@nestjs/common';
@@ -15,6 +15,7 @@ export class ProductService {
   async allProduct(query: GetAllProductQuery): Promise<ProductResponse[]> {
     const { category, product_name, limit, page } = query;
     const filter: FilterQuery<ProductDocument> = {};
+    filter.status = ProductStatus.ACTIVE;
     if (category) {
       filter.category_id = mId(category);
     }
@@ -66,7 +67,7 @@ export class ProductService {
   }
 
   async deleteProduct(productId: string): Promise<void> {
-    await this.ProductModel.findByIdAndDelete(productId);
+    await this.ProductModel.findByIdAndUpdate(productId, { status: ProductStatus.DELETED });
   }
 
   async getProductById(productId: string): Promise<ProductResponse> {

@@ -4,6 +4,11 @@ import { QueryFilter } from 'resources/user/dto/user.dto';
 
 export type ProductDocument = Product & Document;
 
+export enum ProductStatus {
+  ACTIVE = 'active',
+  DELETED = 'deleted',
+}
+
 @Schema({ timestamps: true })
 export class Product {
   @Prop({ required: true, type: mongooseSchema.Types.ObjectId, ref: 'category' })
@@ -32,6 +37,9 @@ export class Product {
 
   @Prop({ required: true })
   nhasx: string;
+
+  @Prop({ required: true, enum: ProductStatus, default: ProductStatus.ACTIVE })
+  status: ProductStatus;
 
   @Prop()
   updatedAt: Date;

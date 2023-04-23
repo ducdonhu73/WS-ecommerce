@@ -19,4 +19,10 @@ export class OrderController {
   rejectOrder(@Body() request: ApproveOrderRequest) {
     return this.orderService.rejectOrder(request.orderId);
   }
+
+  @Get()
+  @Roles(Role.ADMIN)
+  getAllOrder() {
+    return this.orderService.getAllOrder();
+  }
 }
