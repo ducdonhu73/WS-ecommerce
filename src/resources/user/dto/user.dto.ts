@@ -1,5 +1,5 @@
 import { IsInt, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { UserDocument } from '../entities/user.entity';
+import { Address, UserDocument } from '../entities/user.entity';
 import { PaginationQuery } from 'dtos/pagination.dto';
 import { Type } from 'class-transformer';
 import { Role } from 'constants/roles';
@@ -54,8 +54,10 @@ export class UpdateUserRequest {
   lastName?: string;
 
   @IsOptional()
-  @Length(0, 255)
-  email?: string;
+  address: Address;
+
+  @IsOptional()
+  phoneNumber: string;
 }
 
 export class DeleteUserRequest {

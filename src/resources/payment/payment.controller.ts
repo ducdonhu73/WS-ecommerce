@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Param } from '@nestjs/common';
+import { Body, Controller, Post, Get } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { UserId } from 'decorators/auth.decorator';
 import { PaymentRequest } from './dto/payment.request.dto';
@@ -9,7 +9,11 @@ export class PaymentController {
 
   @Post()
   payment(@UserId() userId: string, @Body() request: PaymentRequest) {
-    console.log(request);
     return this.paymentService.payment(userId, request);
+  }
+
+  @Get()
+  getTotal() {
+    return this.paymentService.getTotal();
   }
 }

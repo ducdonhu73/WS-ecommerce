@@ -1,17 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Product } from 'resources/products/entities/product.entities';
-import { User } from 'resources/user/entities/user.entity';
 import { Order } from 'resources/order/entities/order.entity';
 import { PaymentRequest } from './dto/payment.request.dto';
+import { Payment } from './entities/payment.entity';
 
 @Injectable()
 export class PaymentService {
   constructor(
     @InjectModel(Order.name) private OrderModel: Model<Order>,
-    @InjectModel(Product.name) private ProductModel: Model<Product>,
-    @InjectModel(User.name) private UserModel: Model<User>,
+    @InjectModel(Payment.name) private PaymentModel: Model<Payment>,
   ) {}
 
   async payment(userId: string, request: PaymentRequest): Promise<void> {
@@ -23,5 +21,10 @@ export class PaymentService {
         await this.OrderModel.create({ p_id: product?._id, total: quantity * product?.price, u_id: userId, quantity });
       } else throw new BadRequestException('not found product or quantity');
     }
+  }
+
+  async getTotal(): Promise<number> {
+    await this.PaymentModel.create({ total: 50000 });
+    return (await this.PaymentModel.find()).at(0)?.total as number;
   }
 }

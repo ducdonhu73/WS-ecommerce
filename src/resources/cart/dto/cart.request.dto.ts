@@ -13,6 +13,6 @@ export class RemoveFromCartRequest {
 export class BuyProductRequest {
   @IsNotEmpty()
   @IsArray()
-  @Transform(({ value }: { value: string }) => value.split(',').map((item) => item.trim()))
+  // @Transform(({ value }: { value: string }) => value.split(',').map((item) => item.trim()))
   listCartId: string[];
 }

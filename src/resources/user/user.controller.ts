@@ -1,5 +1,4 @@
 import { Controller, Get, Body, Put, Delete, Post, Query, Param } from '@nestjs/common';
-import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { UserId } from 'decorators/auth.decorator';
 import {
@@ -15,6 +14,7 @@ import {
   LoginFirebaseResponse,
 } from './dto/user.dto';
 import { PaginationDataResponse } from 'dtos/pagination.dto';
+import { UserService } from './user.service';
 
 @ApiTags('User')
 @Controller('users')
