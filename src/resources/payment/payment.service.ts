@@ -5,9 +5,11 @@ import { Product } from 'resources/products/entities/product.entities';
 import { User } from 'resources/user/entities/user.entity';
 import { Order } from 'resources/order/entities/order.entity';
 import { PaymentRequest } from './dto/payment.request.dto';
+import axios from 'axios';
 
 @Injectable()
 export class PaymentService {
+  
   constructor(
     @InjectModel(Order.name) private OrderModel: Model<Order>,
     @InjectModel(Product.name) private ProductModel: Model<Product>,
@@ -24,4 +26,6 @@ export class PaymentService {
       } else throw new BadRequestException('not found product or quantity');
     }
   }
+
 }
+
