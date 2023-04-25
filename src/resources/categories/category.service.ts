@@ -7,8 +7,8 @@ import { BadRequestException } from '@nestjs/common';
 export class CategoryService {
   constructor(@InjectModel(Category.name) private CategoryModel: Model<Category>) {}
 
-  async allCategory() :Promise<CategoryResponse[]>{
-    return this.CategoryModel.find();
+  async allCategory(): Promise<CategoryResponse[]> {
+    return (await this.CategoryModel.find()).map((c) => new CategoryResponse(c));
   }
 
   async addCategory(request: AddCategoryRequest): Promise<void> {
@@ -16,9 +16,11 @@ export class CategoryService {
     await this.CategoryModel.create({ category_name, description, image });
   }
 
-  async updateCategory(id: string, request: UpdateCategoryRequest): Promise<void> {
+  async updateCategory(id: string, request: UpdateCategoryRequest): Promise<CategoryResponse> {
     const { category_name, description, image } = request;
-    await this.CategoryModel.findByIdAndUpdate(id, { category_name, description, image });
+    const cate = await this.CategoryModel.findByIdAndUpdate(id, { category_name, description, image });
+    if (!cate) throw new BadRequestException('category not exist');
+    return new CategoryResponse(cate);
   }
 
   async deleteCategory(id: string): Promise<void> {

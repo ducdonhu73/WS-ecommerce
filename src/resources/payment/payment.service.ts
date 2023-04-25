@@ -4,13 +4,14 @@ import { Model } from 'mongoose';
 import { Order } from 'resources/order/entities/order.entity';
 import { PaymentRequest } from './dto/payment.request.dto';
 import { Payment } from './entities/payment.entity';
+import { Product } from 'resources/products/entities/product.entities';
 
 @Injectable()
 export class PaymentService {
-  
   constructor(
     @InjectModel(Order.name) private OrderModel: Model<Order>,
     @InjectModel(Payment.name) private PaymentModel: Model<Payment>,
+    @InjectModel(Product.name) private ProductModel: Model<Product>,
   ) {}
 
   async payment(userId: string, request: PaymentRequest): Promise<void> {
@@ -21,6 +22,9 @@ export class PaymentService {
       const quantity = order[i]?.quantity;
       if (product && quantity) {
         totalB += product.price * quantity;
+        const p = await this.ProductModel.findById(product._id);
+        if (!p) throw new BadRequestException();
+        await p.updateOne({ amount: p.amount - quantity });
         await this.OrderModel.create({ p_id: product?._id, total: quantity * product?.price, u_id: userId, quantity });
       } else throw new BadRequestException('not found product or quantity');
     }
@@ -31,6 +35,4 @@ export class PaymentService {
   async getTotal(): Promise<number> {
     return (await this.PaymentModel.find().sort({ createdAt: -1 })).at(0)?.total as number;
   }
-
 }
-

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { Order, OrderDocument, OrderStatus } from 'resources/order/entities/order.entity';
 import { Product } from 'resources/products/entities/product.entities';
-import { User } from 'resources/user/entities/user.entity';
+import { User, UserDocument } from 'resources/user/entities/user.entity';
 import { StatisticRequest } from './dto/statistic.request.dto';
 import { mId } from 'utils/helper';
 import { StatisticResponse } from './dto/statistic.response.dto';

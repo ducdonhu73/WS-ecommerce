@@ -47,7 +47,7 @@ export class OrderService {
     ).map((e) => new OrderResponse(e));
   }
   async approveOrder(orderId: string): Promise<void> {
-    const order = this.OrderModel.findById(orderId);
+    const order = await this.OrderModel.findById(orderId);
     if (!order) {
       throw new BadRequestException('Order is not existed');
     }
@@ -55,10 +55,13 @@ export class OrderService {
   }
 
   async rejectOrder(orderId: string): Promise<void> {
-    const order = this.OrderModel.findById(orderId);
+    const order = await this.OrderModel.findById(orderId);
     if (!order) {
       throw new BadRequestException('Order is not existed');
     }
+    const product = await this.ProductModel.findById(order.p_id);
+    if (!product) throw new BadRequestException('product not exist');
+    await product.updateOne({ amount: product.amount + order.quantity });
     await order.updateOne({ status: OrderStatus.FAILD });
   }
 }
