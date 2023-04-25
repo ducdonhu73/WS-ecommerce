@@ -24,7 +24,6 @@ export class PaymentService {
   }
 
   async getTotal(): Promise<number> {
-    await this.PaymentModel.create({ total: 50000 });
     return (await this.PaymentModel.find()).at(0)?.total as number;
   }
 }
