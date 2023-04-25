@@ -10,6 +10,14 @@ export enum UserStatus {
   DELETED = 'deleted',
 }
 
+export class Address {
+  address?: string;
+  city?: string;
+  country?: string;
+  province?: string;
+  postalCode?: string;
+}
+
 export type UserDocument = User & Document;
 
 @Schema({ timestamps: true })
@@ -34,6 +42,10 @@ export class User {
 
   @Prop({ default: Role.USER, enum: Role })
   role: Role;
+
+  @Prop({ type: Address })
+  address?: Address;
+
   @Prop()
   updatedAt: Date;
 

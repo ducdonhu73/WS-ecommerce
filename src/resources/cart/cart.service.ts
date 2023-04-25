@@ -45,8 +45,8 @@ export class CartService {
   async buyProductInCart(listCartId: string[]): Promise<void> {
     const listCart = await this.CartModel.find({ $and: [{ _id: listCartId }, { status: CartStatus.WAITTING }] });
     if (listCart.length === listCartId.length) {
-      listCart.map((c) => {
-        c.updateOne({ status: CartStatus.BUYED });
+      await listCart.forEach(async (c) => {
+        await c.updateOne({ status: CartStatus.BUYED });
       });
     } else throw new BadRequestException('product is no longer in the cart');
   }

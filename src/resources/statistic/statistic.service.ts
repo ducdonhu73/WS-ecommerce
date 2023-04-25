@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { Order, OrderDocument, OrderStatus } from 'resources/order/entities/order.entity';
@@ -22,6 +22,35 @@ export class StatisticService {
     filters.status = OrderStatus.SUCCESS;
     if (userId) filters.u_id = mId(userId);
     if (productId) filters.p_id = mId(productId);
+    return (
+      await this.OrderModel.aggregate([
+        {
+          $match: filters,
+        },
+        {
+          $lookup: {
+            from: 'users',
+            as: 'user',
+            foreignField: '_id',
+            localField: 'u_id',
+          },
+        },
+        {
+          $lookup: {
+            from: 'products',
+            as: 'product',
+            foreignField: '_id',
+            localField: 'p_id',
+          },
+        },
+      ])
+    ).map((o) => new StatisticResponse(o as OrderDocument));
+  }
+
+  async getHistoriesByUser(userId: string): Promise<any> {
+    const filters: FilterQuery<OrderDocument> = {};
+    filters.status = OrderStatus.SUCCESS;
+    filters.u_id = mId(userId);
     return (
       await this.OrderModel.aggregate([
         {

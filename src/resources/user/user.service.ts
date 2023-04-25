@@ -23,10 +23,9 @@ export class UserService {
   constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
 
   async register(request: RegisterUserRequest): Promise<LoginResponse> {
-    const filter = { phoneNumber: request.phoneNumber };
-    const User = await this.UserModel.findOne(filter).exec();
-    if (User) {
-      throw new BadRequestException('Phone number exist');
+    const user = await this.UserModel.findOne({ phoneNumber: request.phoneNumber, email: request.email }).exec();
+    if (user) {
+      throw new BadRequestException('Phone number or email exist');
     }
     const { firstName, lastName, phoneNumber, email, password, confirmPassword, idGoogle } = request;
     if (confirmPassword !== password) throw new BadRequestException('Passwords are not the same!');
