@@ -194,10 +194,6 @@ export class UserService {
 
     const UserFindByEmail = await this.UserModel.findOne({ email: email });
     if (UserFindByEmail) throw new BadRequestException('Email exist');
-    const UserFindByPhone = await this.UserModel.findOne({
-      phoneNumber: phone_number,
-    });
-    if (UserFindByPhone) throw new BadRequestException('Phone exist');
 
     const password = Math.round(Math.random() * 100000000).toString();
     const nameArray = (name as string).split(' ');
