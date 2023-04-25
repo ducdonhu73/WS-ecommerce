@@ -14,16 +14,20 @@ export class PaymentService {
 
   async payment(userId: string, request: PaymentRequest): Promise<void> {
     const { order } = request;
+    let totalB = 0;
     for (let i = 0; i < order.length; i++) {
       const product = order[i]?.product;
       const quantity = order[i]?.quantity;
       if (product && quantity) {
+        totalB += product.price * quantity;
         await this.OrderModel.create({ p_id: product?._id, total: quantity * product?.price, u_id: userId, quantity });
       } else throw new BadRequestException('not found product or quantity');
     }
+    await this.PaymentModel.create({ total: totalB });
+    return;
   }
 
   async getTotal(): Promise<number> {
-    return (await this.PaymentModel.find()).at(0)?.total as number;
+    return (await this.PaymentModel.find().sort({ createdAt: -1 })).at(0)?.total as number;
   }
 }
