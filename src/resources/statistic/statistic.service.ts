@@ -16,11 +16,39 @@ export class StatisticService {
     @InjectModel(User.name) private UserModel: Model<User>,
   ) {}
   async getAllHistories(request: StatisticRequest): Promise<any> {
-    const { userId, productId } = request;
+    const { userId, productId, endDate, startDate, minPrice, maxPrice } = request;
     const filters: FilterQuery<OrderDocument> = {};
     filters.status = OrderStatus.SUCCESS;
     if (userId) filters.u_id = mId(userId);
     if (productId) filters.p_id = mId(productId);
+    if (startDate && endDate) {
+      filters.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    } else if (startDate) {
+      filters.createdAt = {
+        $gte: new Date(startDate),
+      };
+    } else if (endDate) {
+      filters.createdAt = {
+        $lte: new Date(endDate),
+      };
+    }
+    if (minPrice && maxPrice) {
+      filters.total = {
+        $gte: minPrice,
+        $lte: maxPrice,
+      };
+    } else if (minPrice) {
+      filters.total = {
+        $gte: minPrice,
+      };
+    } else if (maxPrice) {
+      filters.total = {
+        $lte: maxPrice,
+      };
+    }
     return (
       await this.OrderModel.aggregate([
         {

@@ -89,16 +89,20 @@ export class UpdateProductRequest {
 export class GetAllProductQuery extends PaginationQuery {
   @IsOptional()
   category: string;
+
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
   minPrice: number;
+
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
   maxPrice: number;
+
   @IsOptional()
   startDate: Date;
+
   @IsOptional()
   endDate: Date;
 
