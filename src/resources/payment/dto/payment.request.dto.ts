@@ -14,4 +14,5 @@ class OrderRequest {
 
 export class PaymentRequest {
   order: OrderRequest[];
+  discount: string;
 }

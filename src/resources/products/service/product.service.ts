@@ -13,7 +13,7 @@ export class ProductService {
   ) {}
 
   async allProduct(query: GetAllProductQuery): Promise<ProductResponse[]> {
-    const { category, product_name, limit, page } = query;
+    const { category, product_name, limit, page, startDate, endDate, minPrice, maxPrice } = query;
     const filter: FilterQuery<ProductDocument> = {};
     filter.status = ProductStatus.ACTIVE;
     if (category) {
@@ -22,7 +22,52 @@ export class ProductService {
     if (product_name) {
       filter.product_name = { $regex: new RegExp(`${product_name}`, 'i') };
     }
-    return this.ProductModel.find(filter);
+    if (startDate && endDate) {
+      filter.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    } else if (startDate) {
+      filter.createdAt = {
+        $gte: new Date(startDate),
+      };
+    } else if (endDate) {
+      filter.createdAt = {
+        $lte: new Date(endDate),
+      };
+    }
+    if (minPrice && maxPrice) {
+      filter.price = {
+        $gte: minPrice,
+        $lte: maxPrice,
+      };
+    } else if (minPrice) {
+      filter.price = {
+        $gte: minPrice,
+      };
+    } else if (maxPrice) {
+      filter.price = {
+        $lte: maxPrice,
+      };
+    }
+    return await this.ProductModel.aggregate([
+      {
+        $match: filter,
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          as: 'category',
+          localField: 'category_id',
+          foreignField: '_id',
+        },
+      },
+      {
+        $addFields: {
+          category_name: '$category.category_name',
+        },
+      },
+    ]);
   }
 
   async addProduct(request: AddProductRequest): Promise<ProductResponse> {

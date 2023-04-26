@@ -5,6 +5,7 @@ import { Order } from 'resources/order/entities/order.entity';
 import { PaymentRequest } from './dto/payment.request.dto';
 import { Payment } from './entities/payment.entity';
 import { Product } from 'resources/products/entities/product.entities';
+import { Discount } from 'resources/discount/entites/discount.entity';
 
 @Injectable()
 export class PaymentService {
@@ -12,10 +13,11 @@ export class PaymentService {
     @InjectModel(Order.name) private OrderModel: Model<Order>,
     @InjectModel(Payment.name) private PaymentModel: Model<Payment>,
     @InjectModel(Product.name) private ProductModel: Model<Product>,
+    @InjectModel(Discount.name) private discountModel: Model<Discount>,
   ) {}
 
   async payment(userId: string, request: PaymentRequest): Promise<void> {
-    const { order } = request;
+    const { order, discount } = request;
     let totalB = 0;
     for (let i = 0; i < order.length; i++) {
       const product = order[i]?.product;
@@ -27,6 +29,11 @@ export class PaymentService {
         await p.updateOne({ amount: p.amount - quantity });
         await this.OrderModel.create({ p_id: product?._id, total: quantity * product?.price, u_id: userId, quantity });
       } else throw new BadRequestException('not found product or quantity');
+    }
+    const dis = await this.discountModel.findById(discount);
+    if (dis && dis.limit > 0) {
+      totalB = totalB - (totalB * dis.discountRate) / 100;
+      await dis.updateOne({ limit: dis.limit - 1 });
     }
     await this.PaymentModel.create({ total: totalB });
     return;

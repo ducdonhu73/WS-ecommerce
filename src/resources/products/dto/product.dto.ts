@@ -3,6 +3,7 @@ import { ProductDocument } from '../entities/product.entities';
 import { Types } from 'mongoose';
 import { CategoryDocument } from 'resources/categories/category.entities';
 import { PaginationQuery } from 'dtos/pagination.dto';
+import { Type } from 'class-transformer';
 
 export class AddProductRequest {
   @IsNotEmpty()
@@ -88,6 +89,18 @@ export class UpdateProductRequest {
 export class GetAllProductQuery extends PaginationQuery {
   @IsOptional()
   category: string;
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  minPrice: number;
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  maxPrice: number;
+  @IsOptional()
+  startDate: Date;
+  @IsOptional()
+  endDate: Date;
 
   @IsOptional()
   product_name: string;
@@ -110,6 +123,7 @@ export class ProductResponse {
 
   constructor(product: ProductDocument, category?: CategoryDocument) {
     this._id = product.id as string;
+    if (product._id) this._id = product._id;
     if (category) this.category_name = category.category_name;
     else this.category_id = product.category_id;
     this.product_name = product.product_name;

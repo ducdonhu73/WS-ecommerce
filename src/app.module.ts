@@ -15,6 +15,7 @@ import { RolesGuard } from 'guards/roles.guard';
 import { OrdertModule } from 'resources/order/order.module';
 import { PaymenttModule } from 'resources/payment/payment.module';
 import { StatisticModule } from 'resources/statistic/statistic.module';
+import { DiscountModule } from './resources/discount/discount.module';
 
 mongoose.set('debug', true);
 
@@ -43,6 +44,7 @@ mongoose.set('debug', true);
     OrdertModule,
     StatisticModule,
     PaymenttModule,
+    DiscountModule,
   ],
 })
 export class AppModule {}

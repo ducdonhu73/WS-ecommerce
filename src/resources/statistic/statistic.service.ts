@@ -17,7 +17,6 @@ export class StatisticService {
   ) {}
   async getAllHistories(request: StatisticRequest): Promise<any> {
     const { userId, productId } = request;
-    console.log(userId);
     const filters: FilterQuery<OrderDocument> = {};
     filters.status = OrderStatus.SUCCESS;
     if (userId) filters.u_id = mId(userId);
